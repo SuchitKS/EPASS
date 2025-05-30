@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal QR Scanner</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .scanner-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .scan-box {
+            width: 70%;
+            max-width: 300px;
+            aspect-ratio: 1/1;
+            border: 2px solid #fff;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #4CAF50, transparent);
+            animation: scan 2s linear infinite;
+            border-radius: 3px;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: #4CAF50;
+            border-style: solid;
+            border-width: 0;
+        }
+        
+        .corner-tl {
+            top: -1px;
+            left: -1px;
+            border-top-width: 4px;
+            border-left-width: 4px;
+            border-top-left-radius: 6px;
+        }
+        
+        .corner-tr {
+            top: -1px;
+            right: -1px;
+            border-top-width: 4px;
+            border-right-width: 4px;
+            border-top-right-radius: 6px;
+        }
+        
+        .corner-bl {
+            bottom: -1px;
+            left: -1px;
+            border-bottom-width: 4px;
+            border-left-width: 4px;
+            border-bottom-left-radius: 6px;
+        }
+        
+        .corner-br {
+            bottom: -1px;
+            right: -1px;
+            border-bottom-width: 4px;
+            border-right-width: 4px;
+            border-bottom-right-radius: 6px;
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 80%;
+        }
+        
+        .result-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1a1a1a;
+            padding: 20px;
+            box-sizing: border-box;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            z-index: 10;
+        }
+        
+        .result-panel.show {
+            transform: translateY(0);
+        }
+        
+        .result-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+        
+        .result-content {
+            font-size: 16px;
+            word-break: break-all;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .camera-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 5;
+        }
+        
+        .camera-icon {
+            color: white;
+            font-size: 24px;
+        }
+        
+        .status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 14px;
+            z-index: 5;
+        }
+        
+        .phone-connection-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .connection-qr {
+            width: 200px;
+            height: 200px;
+            margin: 20px 0;
+            background-color: white;
+            padding: 10px;
+        }
+        
+        .connection-instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            max-width: 80%;
+        }
+        
+        .connection-url {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            word-break: break-all;
+            margin-bottom: 20px;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .action-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        
+        <div class="scan-overlay">
+            <div class="scan-box">
+                <div class="scan-line"></div>
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+            </div>
+            <div class="instructions">Point your camera at a QR code</div>
+        </div>
+        
+        <div class="result-panel" id="resultPanel">
+            <button class="close-btn" id="closeBtn">×</button>
+            <div class="result-title">Scanned QR Code</div>
+            <div class="result-content" id="resultContent"></div>
+        </div>
+        
+        <button class="camera-switch" id="cameraSwitch" title="Switch Camera">
+            <svg class="camera-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+        </button>
+        
+        <div class="status" id="status">Initializing camera...</div>
+        
+        <!-- Phone connection panel (shown when no camera is available) -->
+        <div class="phone-connection-panel hidden" id="phoneConnectionPanel">
+            <h2>Use Your Phone as Camera</h2>
+            <div class="connection-instructions">
+                Scan this QR code with your phone to use your phone's camera for scanning
+            </div>
+            <div class="connection-qr" id="connectionQr"></div>
+            <div class="connection-instructions">
+                Or visit this URL on your phone:
+            </div>
+            <div class="connection-url" id="connectionUrl"></div>
+            <button class="action-button" id="retryCameraBtn">Try My PC Camera Again</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script>
+        // DOM elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const resultPanel = document.getElementById('resultPanel');
+        const resultContent = document.getElementById('resultContent');
+        const closeBtn = document.getElementById('closeBtn');
+        const cameraSwitch = document.getElementById('cameraSwitch');
+        const statusElement = document.getElementById('status');
+        const phoneConnectionPanel = document.getElementById('phoneConnectionPanel');
+        const connectionQr = document.getElementById('connectionQr');
+        const connectionUrl = document.getElementById('connectionUrl');
+        const retryCameraBtn = document.getElementById('retryCameraBtn');
+        
+        // Variables
+        let stream = null;
+        let scanningInterval = null;
+        let currentFacingMode = 'environment'; // Start with rear camera on mobile
+        let isScanning = false;
+        let peerConnection = null;
+        let socket = null;
+        let sessionId = generateSessionId();
+        let isUsingPhoneCamera = false;
+        
+        // Generate a random session ID
+        function generateSessionId() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+        
+        // Initialize scanner automatically
+        window.addEventListener('DOMContentLoaded', initScanner);
+        
+        // Initialize the scanner
+        async function initScanner() {
+            try {
+                statusElement.textContent = 'Accessing camera...';
+                
+                // Try to get media devices first to ensure permissions
+                await navigator.mediaDevices.getUserMedia({ video: true });
+                
+                // Get list of available devices
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                // Determine if we're on a mobile device
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                // Start with rear camera on mobile, or first available on PC
+                if (!isMobile) {
+                    currentFacingMode = 'user'; // Use front camera on PC by default
+                }
+                
+                await startCamera();
+                
+                // Show camera switch only if multiple cameras are available
+                if (videoDevices.length > 1) {
+                    cameraSwitch.style.display = 'flex';
+                }
+                
+            } catch (err) {
+                console.error('Camera error:', err);
+                statusElement.textContent = 'Error accessing camera';
+                
+                if (err.name === 'NotAllowedError') {
+                    statusElement.textContent = 'Camera permission denied';
+                } else if (err.name === 'NotFoundError') {
+                    // No camera found - show phone connection option
+                    showPhoneConnectionOption();
+                } else {
+                    // For other errors, try a fallback
+                    try {
+                        const fallbackConstraints = { video: true };
+                        stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+                        video.srcObject = stream;
+                        video.play();
+                        statusElement.textContent = 'Ready to scan';
+                        startScanning();
+                    } catch (fallbackErr) {
+                        console.error('Fallback camera error:', fallbackErr);
+                        showPhoneConnectionOption();
+                    }
+                }
+            }
+        }
+        
+        // Show phone connection option
+        function showPhoneConnectionOption() {
+            phoneConnectionPanel.classList.remove('hidden');
+            statusElement.textContent = 'No camera available';
+            
+            // Generate connection URL and QR code
+            const connectionLink = `${window.location.origin}${window.location.pathname}?remote=${sessionId}`;
+            connectionUrl.textContent = connectionLink;
+            
+            QRCode.toCanvas(connectionQr, connectionLink, { width: 200 }, (error) => {
+                if (error) console.error('QR code generation error:', error);
+            });
+            
+            // For demo purposes, we'll simulate the connection
+            // In a real app, you would set up WebSocket signaling here
+            statusElement.textContent = 'Waiting for phone connection...';
+        }
+        
+        // Start camera with current facing mode
+        async function startCamera() {
+            // Stop previous stream if exists
+            if (stream) {
+                stopCamera();
+            }
+            
+            // Hide phone connection panel if shown
+            phoneConnectionPanel.classList.add('hidden');
+            isUsingPhoneCamera = false;
+            
+            try {
+                statusElement.textContent = 'Starting camera...';
+                
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: currentFacingMode
+                    }
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                
+                // Wait for video to be ready
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve();
+                    };
+                });
+                
+                statusElement.textContent = 'Ready to scan';
+                startScanning();
+                
+            } catch (err) {
+                console.error('Camera start error:', err);
+                statusElement.textContent = 'Error starting camera';
+                
+                // Fallback to any camera if facingMode fails
+                if (err.name === 'OverconstrainedError') {
+                    try {
+                        const fallbackConstraints = { video: true };
+                        stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+                        video.srcObject = stream;
+                        video.play();
+                        statusElement.textContent = 'Ready to scan';
+                        startScanning();
+                    } catch (fallbackErr) {
+                        console.error('Fallback camera error:', fallbackErr);
+                        showPhoneConnectionOption();
+                    }
+                } else {
+                    showPhoneConnectionOption();
+                }
+            }
+        }
+        
+        // Stop camera
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            stopScanning();
+        }
+        
+        // Start scanning for QR codes
+        function startScanning() {
+            if (isScanning) return;
+            
+            isScanning = true;
+            statusElement.textContent = 'Scanning...';
+            
+            scanningInterval = setInterval(() => {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    
+                    const context = canvas.getContext('2d');
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: 'dontInvert'
+                    });
+                    
+                    if (code) {
+                        handleQRCodeDetected(code.data);
+                    }
+                }
+            }, 100); // Scan every 100ms
+        }
+        
+        // Stop scanning
+        function stopScanning() {
+            isScanning = false;
+            if (scanningInterval) {
+                clearInterval(scanningInterval);
+                scanningInterval = null;
+            }
+        }
+        
+        // Handle detected QR code
+        function handleQRCodeDetected(data) {
+            stopScanning();
+            resultContent.textContent = data;
+            resultPanel.classList.add('show');
+            statusElement.textContent = 'QR code detected';
+            
+            // Vibrate on mobile if available
+            if ('vibrate' in navigator) {
+                navigator.vibrate(200);
+            }
+        }
+        
+        // Close result panel and resume scanning
+        function closeResult() {
+            resultPanel.classList.remove('show');
+            startScanning();
+        }
+        
+        // Switch between front and rear cameras
+        async function switchCamera() {
+            try {
+                statusElement.textContent = 'Switching camera...';
+                currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+                await startCamera();
+            } catch (err) {
+                console.error('Camera switch error:', err);
+                statusElement.textContent = 'Error switching camera';
+            }
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeResult);
+        cameraSwitch.addEventListener('click', switchCamera);
+        retryCameraBtn.addEventListener('click', initScanner);
+        
+        // Check if we're loading as a remote camera (phone)
+        function checkIfRemoteCamera() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const remoteSession = urlParams.get('remote');
+            
+            if (remoteSession) {
+                // This is the phone side - set up as camera source
+                setupAsRemoteCamera(remoteSession);
+                return true;
+            }
+            return false;
+        }
+        
+        // Set up this instance as a remote camera (phone side)
+        function setupAsRemoteCamera(sessionId) {
+            // In a real implementation, you would:
+            // 1. Start the phone's camera
+            // 2. Connect to WebSocket signaling server
+            // 3. Establish WebRTC connection to stream video to PC
+            
+            // For this demo, we'll just show a message
+            document.body.innerHTML = `
+                <div style="padding: 20px; text-align: center;">
+                    <h2>Phone Camera Mode</h2>
+                    <p>This device is acting as a camera for another device.</p>
+                    <p>Session ID: ${sessionId}</p>
+                    <p>In a real implementation, this would stream video to your PC.</p>
+                </div>
+            `;
+            
+            return true;
+        }
+        
+        // Initialize based on whether we're the scanner or the camera
+        if (!checkIfRemoteCamera()) {
+            // Clean up when page unloads
+            window.addEventListener('beforeunload', () => {
+                stopCamera();
+            });
+            
+            // Handle visibility changes
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    if (!stream && !isUsingPhoneCamera) {
+                        initScanner();
+                    }
+                } else {
+                    stopCamera();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

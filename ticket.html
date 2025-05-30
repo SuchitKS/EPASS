@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Event Ticket</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+            background: #00416A;
+            background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);  
+            background: linear-gradient(to right, #E4E5E6, #00416A); 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .background-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 107, 157, 0.15), transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(196, 113, 237, 0.15), transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(18, 194, 233, 0.1), transparent 50%);
+            animation: backgroundShift 8s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .ticket-container {
+            position: relative;
+            max-width: 320px;
+            width: 90%;
+            perspective: 1000px;
+        }
+
+        .ticket-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 50%, 
+                rgba(255, 255, 255, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 100px rgba(255, 107, 157, 0.1);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+            transform-style: preserve-3d;
+        }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(-45deg);
+            transition: all 0.8s ease;
+            opacity: 0;
+        }
+
+        .ticket-card:hover::before {
+            animation: shimmer 2s ease-in-out;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(-45deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) translateY(100%) rotate(-45deg); opacity: 0; }
+        }
+
+        .ticket-card:hover {
+            transform: translateZ(20px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 150px rgba(255, 107, 157, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .event-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+           color: #E60026; 
+           background-image: linear-gradient(45deg, #E60026 , #B3001F , #800014 , #4D000A ); background-clip: text; 
+           -webkit-background-clip: text; 
+           -webkit-text-fill-color: transparent; 
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .ticket-content {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .info-section {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .info-section:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateZ(10px);
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b9d, #c471ed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .info-content h3 {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-content p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .description-section {
+            margin-top: 0.8rem;
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .description-section h3 {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .description-section p {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .ticket-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .qr-placeholder {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 8px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        @media (max-width: 480px) {
+            .ticket-card {
+                padding: 1.5rem;
+            }
+            
+            .event-title {
+                font-size: 1.5rem;
+            }
+            
+            .info-section {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-glow"></div>
+    
+    <div class="ticket-container">
+        <div class="ticket-card">
+            <div class="ticket-header">
+                <h1 class="event-title">DIGITAL SUMMIT 2024</h1>
+            </div>
+
+            <div class="ticket-content">
+                <div class="info-section">
+                    <div class="info-icon">📅</div>
+                    <div class="info-content">
+                        <h3>Date</h3>
+                        <p>December 15, 2024</p>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-icon">⏰</div>
+                    <div class="info-content">
+                        <h3>Time</h3>
+                        <p>2:00 PM - 8:00 PM</p>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-icon">📍</div>
+                    <div class="info-content">
+                        <h3>Location</h3>
+                        <p>Tech Convention Center, Silicon Valley</p>
+                    </div>
+                </div>
+
+                <div class="description-section">
+                    <h3>Event Description</h3>
+                    <p>Join us for an exclusive digital transformation summit featuring industry leaders, cutting-edge technology showcases, and networking opportunities that will shape the future of innovation.</p>
+                </div>
+            </div>
+
+            <div class="ticket-footer">
+                <div class="qr-placeholder">QR</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
