@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .scanner-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .scanner-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .scanner-frame {
+            position: relative;
+            margin: 24px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        #reader {
+            width: 100%;
+            min-height: 300px;
+            border-radius: 16px;
+        }
+
+        /* Override default html5-qrcode styles */
+        #reader video {
+            border-radius: 16px;
+        }
+
+        #reader__dashboard_section {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 16px 16px !important;
+            padding: 16px !important;
+        }
+
+        #reader__dashboard_section button {
+            background: linear-gradient(45deg, #667eea, #764ba2) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            color: white !important;
+            font-weight: 600 !important;
+            padding: 12px 24px !important;
+            margin: 4px !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer !important;
+        }
+
+        #reader__dashboard_section button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+        }
+
+        #reader__dashboard_section select {
+            border: 2px solid #e9ecef !important;
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            font-size: 14px !important;
+            background: white !important;
+        }
+
+        .result-container {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .result-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .result-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .result-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            word-break: break-all;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            color: #2c3e50;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .result-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .scan-again-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+        }
+
+        .instructions {
+            background: rgba(108, 117, 125, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .instructions-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .scanning-indicator {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+
+        .scanning-indicator.active {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .scanner-container {
+                margin: 10px;
+                padding: 24px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .scanner-icon {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-container">
+        <div class="header">
+            <div class="scanner-icon">📱</div>
+            <h1>QR Code Scanner</h1>
+            <p class="subtitle">Point your camera at a QR code to scan</p>
+        </div>
+
+        <div class="scanner-frame">
+            <div id="reader"></div>
+            <div class="scanning-indicator" id="scanning-indicator">
+                🔍 Scanning...
+            </div>
+        </div>
+
+        <div id="result-container" class="result-container">
+            <div class="result-icon">✅</div>
+            <div class="result-title">Scan Successful!</div>
+            <div class="result-content" id="result-content"></div>
+            <div class="result-actions">
+                <a href="#" id="result-link" class="action-btn" target="_blank" style="display: none;">
+                    🔗 Open Link
+                </a>
+                <button class="action-btn" id="copy-btn">
+                    📋 Copy
+                </button>
+                <button class="action-btn scan-again-btn" id="scan-again-btn">
+                    🔄 Scan Again
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <div class="instructions-title">📋 Instructions:</div>
+            • Allow camera access when prompted<br>
+            • Hold your device steady<br>
+            • Make sure the QR code is well-lit<br>
+            • Keep the code within the camera frame
+        </div>
+    </div>
+
+    <script>
+        let html5QrcodeScanner = null;
+        let lastResult = '';
+
+        function initScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+
+            const scanningIndicator = document.getElementById('scanning-indicator');
+            scanningIndicator.classList.add('active');
+
+            html5QrcodeScanner = new Html5QrcodeScanner('reader', {
+                qrbox: {
+                    width: 250,
+                    height: 250,
+                },
+                fps: 20,
+                aspectRatio: 1.0,
+                showTorchButtonIfSupported: true,
+                showZoomSliderIfSupported: true,
+                defaultZoomValueIfSupported: 2,
+            });
+
+            html5QrcodeScanner.render(onScanSuccess, onScanError);
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`QR Code detected: ${decodedText}`, decodedResult);
+            
+            lastResult = decodedText;
+            showResult(decodedText);
+            
+            // Hide scanning indicator
+            const scanningIndicator = document.getElementById('scanning-indicator');
+            scanningIndicator.classList.remove('active');
+            
+            // Stop the scanner
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+            }
+        }
+
+        function onScanError(errorMessage) {
+            // We can ignore scan errors as they happen frequently during scanning
+            console.log(`Scan error: ${errorMessage}`);
+        }
+
+        function showResult(text) {
+            const resultContainer = document.getElementById('result-container');
+            const resultContent = document.getElementById('result-content');
+            const resultLink = document.getElementById('result-link');
+            
+            resultContent.textContent = text;
+            
+            // Check if the result is a URL
+            if (isValidUrl(text)) {
+                resultLink.href = text;
+                resultLink.style.display = 'inline-block';
+            } else {
+                resultLink.style.display = 'none';
+            }
+            
+            resultContainer.classList.add('show');
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function copyToClipboard() {
+            if (lastResult) {
+                navigator.clipboard.writeText(lastResult).then(() => {
+                    const copyBtn = document.getElementById('copy-btn');
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '✅ Copied!';
+                    copyBtn.style.background = 'rgba(76, 175, 80, 0.3)';
+                    
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = lastResult;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                });
+            }
+        }
+
+        function scanAgain() {
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.classList.remove('show');
+            initScanner();
+        }
+
+        // Event listeners
+        document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
+        document.getElementById('scan-again-btn').addEventListener('click', scanAgain);
+
+        // Initialize scanner when page loads
+        window.addEventListener('load', initScanner);
+
+        // Clean up when page is unloaded
+        window.addEventListener('beforeunload', function() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+        });
+    </script>
+</body>
+</html>

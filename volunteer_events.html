@@ -1,0 +1,193 @@
+<!-- volunteer_event.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="volunteers.css" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js" integrity="sha512-6sSYJqDreZRZGkJ3b+YfdhB3MzmuP9R7X1QZ6g5aIXhRvTK16O6x7z6zGfpVNfGIH6YguCC6k3BS+wNbgU6yMig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <title>Volunteer for Events</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .hero-section {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px; /* Narrower for centered, row-wise layout */
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 2rem;
+      color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .events-list {
+      max-height: 60vh; /* Limit height for scrolling */
+      overflow-y: auto;
+      padding: 0.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: #667eea #764ba2;
+    }
+
+    .events-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .events-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .events-list::-webkit-scrollbar-thumb {
+      background: #667eea;
+      border-radius: 10px;
+    }
+
+    .event-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .event-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .event-info {
+      flex: 1;
+      margin-right: 1rem;
+    }
+
+    .event-info p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+    }
+
+    .event-info p strong {
+      font-weight: 700;
+      color: #e2e2e2;
+    }
+
+    .event-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .event-actions button {
+      background-color: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+
+    .event-actions button:hover {
+      background-color: #764ba2;
+    }
+
+    .event-item p.no-volunteers {
+      color: #ff4d4d;
+      font-weight: bold;
+      margin: 0.5rem 0;
+    }
+
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 5px;
+      color: white;
+      font-weight: normal;
+      z-index: 1000;
+    }
+
+    .message.success {
+      background-color: rgb(114, 221, 158);
+    }
+
+    .message.error {
+      background-color: rgb(225, 108, 95);
+    }
+
+    .nav-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .nav-btn {
+      background-color: #fff;
+      color: #333;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-btn:hover {
+      background-color: #e2e2e2;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Buttons -->
+  <div class="nav-container">
+    <button id="backBtn" class="nav-btn back-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <button id="logoutBtn" class="nav-btn logout-btn">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+
+  <section class="hero-section">
+    <div class="container">
+      <h2>Volunteer for Events</h2>
+      <div class="events-list">
+        <!-- Event details will be dynamically inserted here -->
+      </div>
+    </div>
+  </section>
+
+  <script src="volunteer_events.js"></script>
+</body>
+</html>
