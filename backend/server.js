@@ -17,8 +17,7 @@ app.use(cors({
     origin: 'https://epass-rff5.onrender.com', // Allow only your frontend origin
     credentials: true // Allow cookies/credentials
 }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+
 
 // Session configuration
 app.use(session({
@@ -26,7 +25,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: true,       // use HTTPS in production
+        secure: process.env.NODE_ENV === 'production',       // use HTTPS in production
         httpOnly: true,     // prevents JS from reading cookie
         sameSite: 'none',   // required for cross-origin
         maxAge: 24 * 60 * 60 * 1000
