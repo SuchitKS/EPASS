@@ -26,10 +26,14 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false,
+        secure: true,       // use HTTPS in production
+        httpOnly: true,     // prevents JS from reading cookie
+        sameSite: 'none',   // required for cross-origin
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
+
+
 
 // Test Supabase connection
 async function testSupabaseConnection() {
