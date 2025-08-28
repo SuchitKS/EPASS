@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+  const API_BASE = 'https://epass-backend.onrender.com';
+
   // Formatting functions
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
@@ -124,7 +126,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Fetch and display event data
-  fetch('/api/my-participant-events')
+  fetch(`${API_BASE}/api/my-participant-events`, {
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include'
+  })
     .then(response => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -175,11 +180,12 @@ document.addEventListener('DOMContentLoaded', function () {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       try {
-        const response = await fetch('/api/signout', {
+        const response = await fetch(`${API_BASE}/api/signout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          credentials: 'include'
         });
 
         const data = await response.json();
