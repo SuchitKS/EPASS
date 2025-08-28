@@ -48,7 +48,16 @@ function requireAuth(req, res, next) {
 
 // Serve login page as default
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.json({ 
+        message: 'EPASS Backend API is running!', 
+        status: 'healthy',
+        endpoints: {
+            signup: 'POST /api/signup',
+            signin: 'POST /api/signin',
+            events: 'GET /api/events',
+            students: 'GET /api/students'
+        }
+    });
 });
 
 // Sign up endpoint
