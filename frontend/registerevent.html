@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
+    />
+
+    <title>All Events</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body>
+    <div
+      class="relative size-full min-h-screen flex-col group/design-root overflow-x-hidden"
+      style='
+        font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+        background: #00416A;
+        background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);
+        background: linear-gradient(to right, #E4E5E6, #00416A);
+        display: flex;
+      '
+    >
+      <div class="layout-container flex h-full grow flex-col w-full">
+        <div class="px-40 flex flex-1 justify-center py-5 w-full">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1 bg-white rounded-xl p-6 shadow-lg">
+            
+            <!-- Header -->
+            <div class="flex flex-wrap justify-between gap-3 p-4">
+              <div class="flex min-w-72 flex-col gap-3">
+                <h1 class="text-[#121416] tracking-light text-[32px] font-bold leading-tight">All Events</h1>
+                <p class="text-[#6a7681] text-sm font-normal leading-normal">Discover and join events happening around you</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="filterEvents('all')" id="filterAll" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#00416A] text-white text-sm font-medium leading-normal">All</button>
+                <button onclick="filterEvents('upcoming')" id="filterUpcoming" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#f1f2f4] text-[#121416] text-sm font-medium leading-normal hover:bg-[#e1e2e4] transition-all">Upcoming</button>
+                <button onclick="filterEvents('ongoing')" id="filterOngoing" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#f1f2f4] text-[#121416] text-sm font-medium leading-normal hover:bg-[#e1e2e4] transition-all">Ongoing</button>
+                <button onclick="filterEvents('completed')" id="filterCompleted" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#f1f2f4] text-[#121416] text-sm font-medium leading-normal hover:bg-[#e1e2e4] transition-all">Completed</button>
+              </div>
+            </div>
+
+            <!-- Loading state -->
+            <div id="loading" class="text-center py-8">
+              <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#00416A]"></div>
+              <p class="mt-2 text-[#6a7681]">Loading events...</p>
+            </div>
+
+            <!-- Error state -->
+            <div id="error" class="hidden text-center py-8">
+              <p class="text-red-500 font-medium">Failed to load events</p>
+              <button onclick="loadAllEvents()" class="mt-2 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#00416A] text-white text-sm font-medium leading-normal hover:bg-opacity-90">
+                Try Again
+              </button>
+            </div>
+
+            <!-- Events container -->
+            <div id="eventsContainer" class="hidden space-y-6">
+              <!-- Events will be populated here -->
+            </div>
+
+            <!-- No events message -->
+            <div id="noEvents" class="hidden text-center py-8">
+              <p class="text-[#6a7681] text-lg">No events found</p>
+            </div>
+
+            <!-- Back button -->
+            <div class="px-4 py-4">
+              <button 
+                onclick="goBack()" 
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#f1f2f4] text-[#121416] text-sm font-medium leading-normal hover:bg-[#e1e2e4] transition-all"
+              >
+                ← Back to Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let allEvents = [];
+      let currentFilter = 'all';
+
+      // Load all events from server
+      async function loadAllEvents() {
+        showLoading();
+
+        try {
+          const response = await fetch('/api/events', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              // User not authenticated, redirect to login
+              window.location.href = '/';
+              return;
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          allEvents = [
+            ...data.events.upcoming.map(e => ({ ...e, status: 'upcoming' })),
+            ...data.events.ongoing.map(e => ({ ...e, status: 'ongoing' })),
+            ...data.events.completed.map(e => ({ ...e, status: 'completed' }))
+          ];
+          
+          displayEvents(allEvents);
+          
+        } catch (error) {
+          console.error('Error loading events:', error);
+          showError('Failed to load events. Please try again.');
+        }
+      }
+
+      // Display events in the UI
+      function displayEvents(events) {
+        const container = document.getElementById('eventsContainer');
+        
+        if (events.length === 0) {
+          showNoEvents();
+          return;
+        }
+
+        container.innerHTML = '';
+        
+        events.forEach(event => {
+          const eventCard = createEventCard(event);
+          container.appendChild(eventCard);
+        });
+
+        showEventsContainer();
+      }
+
+      // Create individual event card
+      function createEventCard(event) {
+        const card = document.createElement('div');
+        card.className = 'bg-white border border-[#dde1e3] rounded-xl shadow-sm hover:shadow-md transition-shadow';
+        
+        // Format date and time
+        const eventDate = new Date(event.eventDate);
+        const formattedDate = eventDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        const timeFormatted = formatTime(event.eventTime);
+        
+        // Status badge
+        const statusColors = {
+          upcoming: 'bg-blue-100 text-blue-800',
+          ongoing: 'bg-green-100 text-green-800',
+          completed: 'bg-gray-100 text-gray-800'
+        };
+        
+        const regFee = event.regFee || 0;
+        const feeText = regFee > 0 ? `₹${regFee}` : 'Free';
+        
+        card.innerHTML = `
+          <div class="flex flex-wrap justify-between gap-3 p-4">
+            <div class="flex min-w-72 flex-col gap-3">
+              <div class="flex items-center gap-3">
+                <p class="text-[#121416] tracking-light text-[24px] font-bold leading-tight">${event.ename}</p>
+                <span class="px-2 py-1 rounded-full text-xs font-medium ${statusColors[event.status]} capitalize">
+                  ${event.status}
+                </span>
+              </div>
+              <p class="text-[#6a7681] text-sm font-normal leading-normal">${event.eventdesc || 'No description available'}</p>
+            </div>
+            ${event.status === 'upcoming' ? `
+            <button
+              onclick="registerForEvent(${event.eid})"
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#00416A] text-white text-sm font-medium leading-normal hover:bg-opacity-90 transition-all"
+            >
+              <span class="truncate">Register</span>
+            </button>
+            ` : ''}
+          </div>
+
+          <h3 class="text-[#121416] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Event Details</h3>
+          <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+            <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
+              <p class="text-[#6a7681] text-sm font-normal leading-normal">Date & Time</p>
+              <p class="text-[#121416] text-sm font-normal leading-normal">${formattedDate}, ${timeFormatted}</p>
+            </div>
+            <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
+              <p class="text-[#6a7681] text-sm font-normal leading-normal">Location</p>
+              <p class="text-[#121416] text-sm font-normal leading-normal">${event.eventLoc || 'Location TBA'}</p>
+            </div>
+            <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
+              <p class="text-[#6a7681] text-sm font-normal leading-normal">Organizer</p>
+              <p class="text-[#121416] text-sm font-normal leading-normal">${event.organizerName || event.clubName || 'Event Organizer'}</p>
+            </div>
+            <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
+              <p class="text-[#6a7681] text-sm font-normal leading-normal">Registration Fee</p>
+              <p class="text-[#121416] text-sm font-normal leading-normal">${feeText}</p>
+            </div>
+            ${event.maxPart ? `
+            <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
+              <p class="text-[#6a7681] text-sm font-normal leading-normal">Max Participants</p>
+              <p class="text-[#121416] text-sm font-normal leading-normal">${event.maxPart}</p>
+            </div>
+            ` : ''}
+            ${event.maxVoln ? `
+            <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
+              <p class="text-[#6a7681] text-sm font-normal leading-normal">Max Volunteers</p>
+              <p class="text-[#121416] text-sm font-normal leading-normal">${event.maxVoln}</p>
+            </div>
+            ` : ''}
+          </div>
+
+          <h3 class="text-[#121416] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">About the Event</h3>
+          <div class="text-[#121416] text-base font-normal leading-normal pb-3 pt-1 px-4">
+            ${event.eventdesc || 'Join us for this exciting event! More details will be available soon. Don\'t miss this opportunity to be part of something special.'}
+          </div>
+        `;
+        
+        return card;
+      }
+
+      // Format time from 24hr to 12hr format
+      function formatTime(timeString) {
+        if (!timeString) return 'Time TBA';
+        
+        const [hours, minutes] = timeString.split(':');
+        const hour24 = parseInt(hours);
+        const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+        const ampm = hour24 >= 12 ? 'PM' : 'AM';
+        
+        return `${hour12}:${minutes} ${ampm}`;
+      }
+
+      // Filter events by status
+      function filterEvents(status) {
+        // Update filter buttons
+        document.querySelectorAll('[id^="filter"]').forEach(btn => {
+          btn.className = 'flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#f1f2f4] text-[#121416] text-sm font-medium leading-normal hover:bg-[#e1e2e4] transition-all';
+        });
+        
+        document.getElementById(`filter${status.charAt(0).toUpperCase() + status.slice(1)}`).className = 
+          'flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#00416A] text-white text-sm font-medium leading-normal';
+        
+        currentFilter = status;
+        
+        if (status === 'all') {
+          displayEvents(allEvents);
+        } else {
+          const filteredEvents = allEvents.filter(event => event.status === status);
+          displayEvents(filteredEvents);
+        }
+      }
+
+      // Register for event
+      async function registerForEvent(eventId) {
+        try {
+          const response = await fetch(`/api/events/${eventId}/join`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert('✅ ' + data.message);
+            // Reload events to update UI
+            loadAllEvents();
+          } else {
+            alert('❌ ' + (data.error || 'Registration failed'));
+          }
+          
+        } catch (error) {
+          console.error('Registration error:', error);
+          alert('❌ Registration failed. Please try again.');
+        }
+      }
+
+      // UI state management functions
+      function showLoading() {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('eventsContainer').style.display = 'none';
+        document.getElementById('noEvents').style.display = 'none';
+      }
+
+      function showError(message) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('eventsContainer').style.display = 'none';
+        document.getElementById('noEvents').style.display = 'none';
+        
+        const errorElement = document.getElementById('error');
+        const errorText = errorElement.querySelector('p');
+        errorText.textContent = message;
+      }
+
+      function showEventsContainer() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('eventsContainer').style.display = 'block';
+        document.getElementById('noEvents').style.display = 'none';
+      }
+
+      function showNoEvents() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('eventsContainer').style.display = 'none';
+        document.getElementById('noEvents').style.display = 'block';
+      }
+
+      // Go back to dashboard
+      function goBack() {
+        window.history.back();
+      }
+
+      // Load events when page loads
+      document.addEventListener('DOMContentLoaded', loadAllEvents);
+    </script>
+  </body>
+</html>
