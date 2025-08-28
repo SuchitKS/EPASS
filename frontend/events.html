@@ -59,10 +59,11 @@
   </section>
 
   <script>
+    const API_BASE = 'https://epass-backend.onrender.com';
     // Logout functionality
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
-        const response = await fetch('/api/signout', {
+        const response = await fetch(`${API_BASE}/api/signout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -84,4 +85,5 @@
     });
   </script>
 </body>
+
 </html>
