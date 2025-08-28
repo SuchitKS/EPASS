@@ -82,6 +82,7 @@
     </div>
 
     <script>
+      const API_BASE = 'https://epass-backend.onrender.com';
       let allEvents = [];
       let currentFilter = 'all';
 
@@ -90,7 +91,7 @@
         showLoading();
 
         try {
-          const response = await fetch('/api/events', {
+          const response = await fetch(`${API_BASE}/api/events`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -263,7 +264,7 @@
       // Register for event
       async function registerForEvent(eventId) {
         try {
-          const response = await fetch(`/api/events/${eventId}/join`, {
+          const response = await fetch(`${API_BASE}/api/events/${eventId}/join`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -329,4 +330,5 @@
       document.addEventListener('DOMContentLoaded', loadAllEvents);
     </script>
   </body>
+
 </html>
