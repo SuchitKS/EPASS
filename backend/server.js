@@ -133,46 +133,51 @@ app.post('/api/signup', async (req, res) => {
 app.post('/api/signin', async (req, res) => {
     try {
         const { usn, password } = req.body;
-        
+
         if (!usn || !password) {
             return res.status(400).json({ error: 'USN and password are required' });
         }
-        
+
+        // Temporarily bypass RLS using Supabase service key if needed
         const { data: rows, error } = await supabase
             .from('student')
             .select('usn, sname, emailid, password')
             .eq('usn', usn)
-            .limit(1);
-        
+            .limit(1)
+            .maybeSingle(); // gets null if no rows
+
         if (error) {
-            console.error('Error fetching student:', error);
+            console.error('Database error:', error);
             return res.status(500).json({ error: 'Database error' });
         }
-        
-        if (!rows || rows.length === 0) {
+
+        if (!rows) {
             return res.status(401).json({ error: 'Invalid USN or password' });
         }
-        
-        const student = rows[0];
-        
+
+        const student = rows;
+
+        // Compare hashed password
         const validPassword = await bcrypt.compare(password, student.password);
         if (!validPassword) {
             return res.status(401).json({ error: 'Invalid USN or password' });
         }
-        
+
+        // Set session
         req.session.userUSN = student.usn;
         req.session.userName = student.sname;
         req.session.userEmail = student.emailid;
-        
-        res.json({ 
-            success: true, 
+
+        return res.status(200).json({
+            success: true,
             message: 'Signed in successfully',
             userUSN: student.usn,
             userName: student.sname
         });
+
     } catch (err) {
         console.error('Error signing in:', err);
-        res.status(500).json({ error: `Error signing in: ${err.message}` });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 });
 
