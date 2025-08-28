@@ -133,51 +133,46 @@ app.post('/api/signup', async (req, res) => {
 app.post('/api/signin', async (req, res) => {
     try {
         const { usn, password } = req.body;
-
+        
         if (!usn || !password) {
             return res.status(400).json({ error: 'USN and password are required' });
         }
-
-        // Temporarily bypass RLS using Supabase service key if needed
+        
         const { data: rows, error } = await supabase
             .from('student')
             .select('usn, sname, emailid, password')
             .eq('usn', usn)
-            .limit(1)
-            .maybeSingle(); // gets null if no rows
-
+            .limit(1);
+        
         if (error) {
-            console.error('Database error:', error);
+            console.error('Error fetching student:', error);
             return res.status(500).json({ error: 'Database error' });
         }
-
-        if (!rows) {
+        
+        if (!rows || rows.length === 0) {
             return res.status(401).json({ error: 'Invalid USN or password' });
         }
-
-        const student = rows;
-
-        // Compare hashed password
+        
+        const student = rows[0];
+        
         const validPassword = await bcrypt.compare(password, student.password);
         if (!validPassword) {
             return res.status(401).json({ error: 'Invalid USN or password' });
         }
-
-        // Set session
+        
         req.session.userUSN = student.usn;
         req.session.userName = student.sname;
         req.session.userEmail = student.emailid;
-
-        return res.status(200).json({
-            success: true,
+        
+        res.json({ 
+            success: true, 
             message: 'Signed in successfully',
             userUSN: student.usn,
             userName: student.sname
         });
-
     } catch (err) {
         console.error('Error signing in:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: `Error signing in: ${err.message}` });
     }
 });
 
