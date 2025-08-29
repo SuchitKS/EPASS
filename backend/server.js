@@ -20,16 +20,17 @@ app.use(cors({
 
 
 // Session configuration
+
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-event-management-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',       // use HTTPS only in production
-        httpOnly: true,     // prevents JS from reading cookie
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',   // required for cross-origin in production
-        maxAge: 24 * 60 * 60 * 1000
-    }
+  secret: process.env.SESSION_SECRET || 'your-event-management-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true,            // always true because you’re on HTTPS (Render enforces it)
+    httpOnly: true,
+    sameSite: 'None',        // must be exactly "None" for cross-origin
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 
@@ -216,14 +217,21 @@ app.get('/api/me', requireAuth, async (req, res) => {
 });
 
 // Sign out endpoint
+
 app.post('/api/signout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ error: 'Could not sign out' });
-        }
-        res.json({ success: true, message: 'Signed out successfully' });
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Could not sign out' });
+    }
+    res.clearCookie('connect.sid', {
+      path: '/',
+      sameSite: 'None',
+      secure: true
     });
+    res.json({ success: true, message: 'Signed out successfully' });
+  });
 });
+
 
 // Get all events
 app.get('/api/events', requireAuth, async (req, res) => {
