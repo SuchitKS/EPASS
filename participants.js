@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Categorize events based on current date
   function categorizeEvents(events) {
     const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+    currentDate.setHours(0, 0, 0, 0);
     
     const categorized = {
       ongoing: [],
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     events.forEach(event => {
       const eventDate = new Date(event.eventDate);
-      eventDate.setHours(0, 0, 0, 0); // Reset time to start of day
+      eventDate.setHours(0, 0, 0, 0);
       
       const diffTime = eventDate.getTime() - currentDate.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -81,7 +81,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // Get participant status text
   function getParticipantStatus(status) {
     switch(status) {
+      case false:
       case 0: return 'Registered';
+      case true:
       case 1: return 'Attended';
       default: return 'Unknown';
     }
@@ -100,8 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Handle event button clicks
   function handleEventButtonClick(eventId, eventType) {
     console.log(`Button clicked for event ${eventId} (${eventType})`);
-    // Redirect to event details page
-    window.location.href = `/ticket3.html?eventId=${eventId}`;
+    window.location.href = `ticket3.html?eventId=${eventId}`;
   }
 
   // Update card contents
@@ -115,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add event listeners to all event buttons
     document.querySelectorAll('.event-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent card hover effects from interfering
+        e.stopPropagation();
         const eventId = btn.getAttribute('data-event-id');
         const eventType = btn.getAttribute('data-event-type');
         handleEventButtonClick(eventId, eventType);
@@ -123,30 +124,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Fetch and display event data
-  fetch('https://epass-backend.onrender.com/api/my-participant-events',{credentials: 'include'})
+  // Fetch and display event data - FIXED VERSION
+  fetch('https://epass-backend.onrender.com/api/my-participant-events', {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
     .then(response => {
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
       
       if (!response.ok) {
+        if (response.status === 401) {
+          console.log('Unauthorized - redirecting to login');
+          window.location.href = 'index.html';
+          return;
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return response.json();
     })
     .then(data => {
-      console.log('Received data:', data); // Debug log
+      console.log('Received data:', data);
       
-      // Handle the participant events data structure
       const participantEvents = data.participantEvents || [];
-      
-      // Categorize events by date
       const categorizedEvents = categorizeEvents(participantEvents);
       
-      console.log('Categorized events:', categorizedEvents); // Debug log
+      console.log('Categorized events:', categorizedEvents);
       
-      // Update the cards with categorized data
       updateCards(categorizedEvents);
 
-      // Add hover effects to cards
       document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseover', () => card.classList.add('hover'));
         card.addEventListener('mouseout', () => card.classList.remove('hover'));
@@ -155,7 +164,6 @@ document.addEventListener('DOMContentLoaded', function () {
     .catch(error => {
       console.error('Error fetching participant events:', error);
       
-      // Show error message in all cards
       document.querySelectorAll('.card__details').forEach(el => {
         el.innerHTML = `<div class="event-item">
           <p><strong>Error:</strong> Could not load events. ${error.message}</p>
@@ -167,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const button = document.querySelector('.button-container button');
   if (button) {
     button.addEventListener('click', () => {
-      window.location.href = '/registerevent.html';
+      window.location.href = 'registerevent.html';
     });
   }
 
@@ -177,8 +185,8 @@ document.addEventListener('DOMContentLoaded', function () {
     logoutBtn.addEventListener('click', async () => {
       try {
         const response = await fetch('https://epass-backend.onrender.com/api/signout', {
-          credentials:'include',
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
           }
@@ -187,8 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = await response.json();
         
         if (data.success) {
-          // Redirect to login page
-          window.location.href = '/';
+          window.location.href = 'index.html';
         } else {
           alert('Error logging out. Please try again.');
         }
@@ -198,6 +205,4 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-
 });
-
