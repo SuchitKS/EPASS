@@ -101,9 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Fetch and display volunteer events
-  fetch('https://epass-backend.onrender.com/api/my-volunteer-events'),{
-    credentials: 'include'
-  }
+  fetch('https://epass-backend.onrender.com/api/my-volunteer-events',{
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' }
+  })
     .then(response => {
       if (!response.ok) {
         if (response.status === 401) {
