@@ -46,8 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/signin', {
+      const response = await fetch('https://epass-backend.onrender.com/api/signin', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -118,8 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/signup', {
+      const response = await fetch('https://epass-backend.onrender.com/api/signup', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -161,7 +163,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Check if user is already authenticated
   async function checkAuthStatus() {
     try {
-      const response = await fetch('http://localhost:3000/api/me');
+      const response = await fetch('https://epass-backend.onrender.com/api/me',{
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
         // User is already logged in, redirect to events page
@@ -481,3 +485,4 @@ document.addEventListener("DOMContentLoaded", () => {
 //     }
 //   });
 // });
+
