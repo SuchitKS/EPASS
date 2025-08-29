@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const response = await fetch('https://epass-backend.onrender.com/api/signout', {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
