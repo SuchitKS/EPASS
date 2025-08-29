@@ -1,5 +1,5 @@
 // Get individual event details (protected route)
-app.get('https://epass-backend.onrender.com/api/events/:eventId', requireAuth, async (req, res) => {
+app.get('/api/events/:eventId', requireAuth, async (req, res) => {
   try {
     const eventId = req.params.eventId;
     // Validate event ID
