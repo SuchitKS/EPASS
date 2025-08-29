@@ -124,8 +124,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Fetch and display event data
-  fetch('https://epass-backend.onrender.com/api/my-participant-events')
+  fetch('https://epass-backend.onrender.com/api/my-participant-events',{credentials: 'include'})
     .then(response => {
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -175,7 +176,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       try {
-        const response = await fetch('/api/signout', {
+        const response = await fetch('https://epass-backend.onrender.com/api/signout', {
+          credentials:'include',
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -198,3 +200,4 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 });
+
