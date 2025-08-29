@@ -27,7 +27,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false,            // always true because you’re on HTTPS (Render enforces it)
+    secure: true,            // always true because you’re on HTTPS (Render enforces it)
     httpOnly: true,
     sameSite: 'None',        // must be exactly "None" for cross-origin
     maxAge: 24 * 60 * 60 * 1000
