@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Fetch and display event data
-  fetch('/api/my-participant-events')
+  fetch('https://epass-backend.onrender.com/api/my-participant-events')
     .then(response => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -196,4 +196,5 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+
 });
