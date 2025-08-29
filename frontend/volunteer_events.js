@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', function () {
   async function fetchEvents() {
     try {
       const response = await fetch(`${API_BASE}/api/events`, {
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
       });
 
       if (!response.ok) {
@@ -133,8 +133,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // Fetch volunteer counts for each event
       const eventsWithCounts = await Promise.all(allEvents.map(async event => {
         const countResponse = await fetch(`${API_BASE}/api/events/${event.eid}/volunteer-count`, {
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include'
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
         });
         const countData = await countResponse.json();
         return { ...event, volunteerCount: countData.count };
@@ -174,8 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const response = await fetch(`${API_BASE}/api/events/${eventId}/volunteer`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
       });
 
       const data = await response.json();
@@ -213,10 +213,10 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const response = await fetch(`${API_BASE}/api/signout`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
-        },
-        credentials: 'include'
+        }
       });
 
       const data = await response.json();
