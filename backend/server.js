@@ -9,6 +9,9 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// CRITICAL: Trust proxy for Render deployment
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
@@ -18,41 +21,42 @@ app.use(cors({
     credentials: true 
 }));
 
-
-// Session configuration
-
+// Session configuration - FIXED for production
 app.use(session({
-  name:'connect.sid',
+  name: 'connect.sid',
   secret: process.env.SESSION_SECRET || 'your-event-management-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,            // always true because you’re on HTTPS (Render enforces it)
+    secure: process.env.NODE_ENV === 'production', // Only secure in production
     httpOnly: true,
-    sameSite: 'None',        // must be exactly "None" for cross-origin
-    maxAge: 24 * 60 * 60 * 1000
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // None for production, Lax for development
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
-
-
 
 // Test Supabase connection
 async function testSupabaseConnection() {
     try {
         const { data, error } = await supabase.from('student').select('count').limit(1);
         if (error) throw error;
-        console.log('Supabase connected successfully');
+        console.log('✅ Supabase connected successfully');
     } catch (err) {
-        console.error('Supabase connection failed:', err);
+        console.error('❌ Supabase connection failed:', err);
     }
 }
 testSupabaseConnection();
 
 // Middleware to check if user is authenticated
 function requireAuth(req, res, next) {
+    console.log('🔐 Auth check - Session:', req.session);
+    console.log('🔐 Auth check - UserUSN:', req.session.userUSN);
+    console.log('🔐 Auth check - Session ID:', req.sessionID);
+    
     if (req.session.userUSN) {
         next();
     } else {
+        console.log('❌ Authentication failed - no userUSN in session');
         res.status(401).json({ error: 'Please sign in first' });
     }
 }
@@ -62,6 +66,7 @@ app.get('/', (req, res) => {
     res.json({ 
         message: 'EPASS Backend API is running!', 
         status: 'healthy',
+        environment: process.env.NODE_ENV || 'development',
         endpoints: {
             signup: 'POST /api/signup',
             signin: 'POST /api/signin',
@@ -122,7 +127,7 @@ app.post('/api/signup', async (req, res) => {
         req.session.userName = name;
         req.session.userEmail = email;
         
-        console.log('Signup - Session created:', req.session);
+        console.log('✅ Signup - Session created:', req.session);
         
         res.status(201).json({ 
             success: true,
@@ -171,7 +176,8 @@ app.post('/api/signin', async (req, res) => {
         req.session.userName = student.sname;
         req.session.userEmail = student.emailid;
         
-        console.log('Signin - Session created:', req.session);
+        console.log('✅ Signin - Session created:', req.session);
+        console.log('✅ Signin - Session ID:', req.sessionID);
         
         res.json({ 
             success: true, 
@@ -185,9 +191,12 @@ app.post('/api/signin', async (req, res) => {
     }
 });
 
-// Get current user info
+// Get current user info - ENHANCED LOGGING
 app.get('/api/me', requireAuth, async (req, res) => {
     try {
+        console.log('🔐 GET /api/me - Session:', req.session);
+        console.log('🔐 GET /api/me - UserUSN:', req.session.userUSN);
+        
         const { data: rows, error } = await supabase
             .from('student')
             .select('usn, sname, sem, mobno, emailid')
@@ -217,22 +226,26 @@ app.get('/api/me', requireAuth, async (req, res) => {
     }
 });
 
-// Sign out endpoint
-
+// Sign out endpoint - ENHANCED
 app.post('/api/signout', (req, res) => {
+  console.log('🚪 Signout requested - Session:', req.session);
+  
   req.session.destroy((err) => {
     if (err) {
+      console.error('❌ Session destroy error:', err);
       return res.status(500).json({ error: 'Could not sign out' });
     }
+    
     res.clearCookie('connect.sid', {
       path: '/',
-      sameSite: 'None',
-      secure: true
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      secure: process.env.NODE_ENV === 'production'
     });
+    
+    console.log('✅ Signout successful');
     res.json({ success: true, message: 'Signed out successfully' });
   });
 });
-
 
 // Get all events
 app.get('/api/events', requireAuth, async (req, res) => {
@@ -273,8 +286,8 @@ app.get('/api/events', requireAuth, async (req, res) => {
             };
             
             const eventDate = new Date(event.eventdate).toISOString().split('T')[0];
-            if (eventDate === currentDate) events.ongoing.push(event);
-            else if (eventDate < currentDate) events.completed.push(event);
+            if (eventDate === currentDate) events.ongoing.push(transformedEvent);
+            else if (eventDate < currentDate) events.completed.push(transformedEvent);
             else events.upcoming.push(transformedEvent);
         });
 
@@ -904,7 +917,6 @@ app.get('/api/scan-qr', async (req, res) => {
     }
 });
 
-
 // Individual Event Details Route
 app.get('/api/events/:eventId', requireAuth, async (req, res) => {
     try {
@@ -1033,8 +1045,8 @@ app.get('/events', requireAuth, async (req, res) => {
             };
             
             const eventDate = new Date(event.eventdate).toISOString().split('T')[0];
-            if (eventDate === currentDate) events.ongoing.push(event);
-            else if (eventDate < currentDate) events.completed.push(event);
+            if (eventDate === currentDate) events.ongoing.push(transformedEvent);
+            else if (eventDate < currentDate) events.completed.push(transformedEvent);
             else events.upcoming.push(transformedEvent);
         });
 
@@ -1045,7 +1057,31 @@ app.get('/events', requireAuth, async (req, res) => {
     }
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        session: {
+            secret: process.env.SESSION_SECRET ? 'configured' : 'using default'
+        }
+    });
+});
+
+// Catch-all error handler
+app.use((err, req, res, next) => {
+    console.error('💥 Unhandled error:', err);
+    res.status(500).json({
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    });
+});
+
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔐 Session secret: ${process.env.SESSION_SECRET ? 'configured' : 'using default'}`);
+    console.log(`📊 Trust proxy: ${app.get('trust proxy')}`);
 });
