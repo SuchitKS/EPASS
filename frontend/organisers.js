@@ -140,7 +140,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // Fetch and display organized events data (only events organized by the logged-in user)
   fetch('https://epass-backend.onrender.com/api/my-organized-events',{
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' }})
+    headers: { 'Content-Type': 'application/json' }}
+       )
     .then(response => {
       if (!response.ok) {
         if (response.status === 401) {
