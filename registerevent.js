@@ -2,7 +2,6 @@
 app.get('https://epass-backend.onrender.com/api/events/:eventId', requireAuth, async (req, res) => {
   try {
     const eventId = req.params.eventId;
-    
     // Validate event ID
     if (!eventId || isNaN(eventId)) {
       return res.status(400).json({ error: 'Invalid event ID' });
@@ -49,3 +48,4 @@ app.get('https://epass-backend.onrender.com/api/events/:eventId', requireAuth, a
   }
 
 });
+
