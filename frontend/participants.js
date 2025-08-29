@@ -1,6 +1,50 @@
 document.addEventListener('DOMContentLoaded', function () {
   const API_BASE = 'https://epass-backend.onrender.com';
 
+  // Enhanced authentication check with better error handling
+  async function checkAuthStatus() {
+    try {
+      console.log('Checking auth status...');
+      const response = await fetch(`${API_BASE}/api/me`, {
+        method: 'GET',
+        credentials: 'include', // CRITICAL: Include credentials
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Auth response status:', response.status);
+      
+      if (response.status === 401) {
+        console.log('User not authenticated, redirecting to login');
+        window.location.href = '/';
+        return false;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const userData = await response.json();
+      console.log('User authenticated:', userData);
+      return true;
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      window.location.href = '/';
+      return false;
+    }
+  }
+
+  // Check authentication before proceeding
+  checkAuthStatus().then(isAuthenticated => {
+    if (!isAuthenticated) {
+      return; // User will be redirected
+    }
+    
+    // If authenticated, proceed with loading events
+    loadParticipantEvents();
+  });
+
   // Formatting functions
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
@@ -83,9 +127,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // Get participant status text
   function getParticipantStatus(status) {
     switch(status) {
-      case 0: return 'Registered';
-      case 1: return 'Attended';
-      default: return 'Unknown';
+      case 0: 
+      case false: 
+        return 'Registered';
+      case 1: 
+      case true: 
+        return 'Attended';
+      default: 
+        return 'Unknown';
     }
   }
 
@@ -110,8 +159,12 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateCards(data) {
     ['ongoing', 'completed', 'upcoming'].forEach(type => {
       const card = document.getElementById(`${type}-card`);
-      const detailsContainer = card.querySelector('.card__details');
-      detailsContainer.innerHTML = createEventHTML(data[type], type);
+      if (card) {
+        const detailsContainer = card.querySelector('.card__details');
+        if (detailsContainer) {
+          detailsContainer.innerHTML = createEventHTML(data[type], type);
+        }
+      }
     });
 
     // Add event listeners to all event buttons
@@ -125,27 +178,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Fetch and display event data
-  fetch(`${API_BASE}/api/my-participant-events`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => {
-      if (!response.ok) {
-        if (response.status === 401) {
-          console.log('Unauthorized - redirecting to login');
-          window.location.href = '/';
-          return;
+  // Load participant events with enhanced error handling
+  async function loadParticipantEvents() {
+    try {
+      console.log('Loading participant events...');
+      
+      const response = await fetch(`${API_BASE}/api/my-participant-events`, {
+        method: 'GET',
+        credentials: 'include', // CRITICAL: Include credentials
+        headers: {
+          'Content-Type': 'application/json'
         }
+      });
+
+      console.log('Participant events response status:', response.status);
+
+      if (response.status === 401) {
+        console.log('Unauthorized - redirecting to login');
+        window.location.href = '/';
+        return;
+      }
+      
+      if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Received data:', data); // Debug log
+
+      const data = await response.json();
+      console.log('Received participant events data:', data);
       
       // Handle the participant events data structure
       const participantEvents = data.participantEvents || [];
@@ -153,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // Categorize events by date
       const categorizedEvents = categorizeEvents(participantEvents);
       
-      console.log('Categorized events:', categorizedEvents); // Debug log
+      console.log('Categorized events:', categorizedEvents);
       
       // Update the cards with categorized data
       updateCards(categorizedEvents);
@@ -163,17 +222,21 @@ document.addEventListener('DOMContentLoaded', function () {
         card.addEventListener('mouseover', () => card.classList.add('hover'));
         card.addEventListener('mouseout', () => card.classList.remove('hover'));
       });
-    })
-    .catch(error => {
+
+    } catch (error) {
       console.error('Error fetching participant events:', error);
       
       // Show error message in all cards
       document.querySelectorAll('.card__details').forEach(el => {
-        el.innerHTML = `<div class="event-item">
-          <p><strong>Error:</strong> Could not load events. ${error.message}</p>
-        </div>`;
+        if (el) {
+          el.innerHTML = `<div class="event-item">
+            <p><strong>Error:</strong> Could not load events. ${error.message}</p>
+            <button onclick="location.reload()" class="retry-btn">Retry</button>
+          </div>`;
+        }
       });
-    });
+    }
+  }
 
   // "Participate in other Event" button handler
   const button = document.querySelector('.button-container button');
@@ -183,22 +246,26 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Logout button handler
+  // Logout button handler with enhanced credentials
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       try {
+        console.log('Logging out...');
+        
         const response = await fetch(`${API_BASE}/api/signout`, {
           method: 'POST',
-          credentials: 'include',
+          credentials: 'include', // CRITICAL: Include credentials
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
         const data = await response.json();
+        console.log('Logout response:', data);
         
         if (data.success) {
+          console.log('Logout successful, redirecting...');
           window.location.href = '/';
         } else {
           alert('Error logging out. Please try again.');
