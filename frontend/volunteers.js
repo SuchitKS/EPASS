@@ -101,7 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Fetch and display volunteer events
-  fetch('/api/my-volunteer-events')
+  fetch('https://epass-backend.onrender.com/api/my-volunteer-events'),{
+    credentials: 'include'
+  }
     .then(response => {
       if (!response.ok) {
         if (response.status === 401) {
@@ -153,8 +155,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // Logout functionality
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     try {
-      const response = await fetch('/api/signout', {
+      const response = await fetch('https://epass-backend.onrender.com/api/signout', {
         method: 'POST',
+        credentials: 'include'
         headers: {
           'Content-Type': 'application/json'
         }
