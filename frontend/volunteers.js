@@ -1,4 +1,50 @@
 document.addEventListener('DOMContentLoaded', function () {
+  const API_BASE = 'https://epass-backend.onrender.com';
+
+  // Enhanced authentication check
+  async function checkAuthStatus() {
+    try {
+      console.log('🔐 Checking auth status for volunteers page...');
+      const response = await fetch(`${API_BASE}/api/me`, {
+        method: 'GET',
+        credentials: 'include', // CRITICAL: Include credentials
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('🔐 Auth response status:', response.status);
+      
+      if (response.status === 401) {
+        console.log('❌ User not authenticated, redirecting to login');
+        window.location.href = '/';
+        return false;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const userData = await response.json();
+      console.log('✅ User authenticated:', userData);
+      return true;
+    } catch (error) {
+      console.error('❌ Auth check failed:', error);
+      window.location.href = '/';
+      return false;
+    }
+  }
+
+  // Check authentication before proceeding
+  checkAuthStatus().then(isAuthenticated => {
+    if (!isAuthenticated) {
+      return; // User will be redirected
+    }
+    
+    // If authenticated, proceed with loading events
+    loadVolunteerEvents();
+  });
+
   // Formatting functions
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
@@ -21,6 +67,20 @@ document.addEventListener('DOMContentLoaded', function () {
     return `${hours}:${minutes} ${ampm}`;
   }
 
+  // Get volunteer status text
+  function getVolunteerStatus(status) {
+    switch(status) {
+      case 0:
+      case false:
+        return 'Registered';
+      case 1:
+      case true:
+        return 'Attended';
+      default:
+        return 'Unknown';
+    }
+  }
+
   // Modified event HTML creation with buttons for each event
   function createEventHTML(events, eventType) {
     if (!Array.isArray(events) || events.length === 0) {
@@ -36,6 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
           <p>Date: ${formatDate(event.eventDate)}</p>
           <p>Time: ${formatTime(event.eventTime)}</p>
           <p>Location: ${event.eventLoc || 'N/A'}</p>
+          ${event.clubName ? `<p>Club: ${event.clubName}</p>` : ''}
+          <p>Status: ${getVolunteerStatus(event.VolnStatus)}</p>
         </div>
         <div class="event-actions">
           <button class="event-btn" data-event-id="${event.eid}" data-event-type="${eventType}">
@@ -85,8 +147,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     ['ongoing', 'completed', 'upcoming'].forEach(type => {
       const card = document.getElementById(`${type}-card`);
-      const detailsContainer = card.querySelector('.card__details');
-      detailsContainer.innerHTML = createEventHTML(categorizedEvents[type], type);
+      if (card) {
+        const detailsContainer = card.querySelector('.card__details');
+        if (detailsContainer) {
+          detailsContainer.innerHTML = createEventHTML(categorizedEvents[type], type);
+        }
+      }
     });
 
     // Add event listeners to all event buttons
@@ -100,24 +166,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Fetch and display volunteer events
-  fetch('https://epass-backend.onrender.com/api/my-volunteer-events',{
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then(response => {
-      if (!response.ok) {
-        if (response.status === 401) {
-          console.log('Unauthorized, redirecting to login');
-          window.location.href = '/';
-          return;
+  // Load volunteer events with enhanced error handling
+  async function loadVolunteerEvents() {
+    try {
+      console.log('🤝 Loading volunteer events...');
+      
+      const response = await fetch(`${API_BASE}/api/my-volunteer-events`, {
+        method: 'GET',
+        credentials: 'include', // CRITICAL: Include credentials
+        headers: {
+          'Content-Type': 'application/json'
         }
-        throw new Error('Network response was not ok');
+      });
+
+      console.log('🤝 Volunteer events response status:', response.status);
+
+      if (response.status === 401) {
+        console.log('❌ Unauthorized - redirecting to login');
+        window.location.href = '/';
+        return;
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Volunteer events data:', data);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('🤝 Volunteer events data:', data);
+      
       updateCards(data.volunteerEvents || []);
 
       // Add hover effects
@@ -125,55 +201,73 @@ document.addEventListener('DOMContentLoaded', function () {
         card.addEventListener('mouseover', () => card.classList.add('hover'));
         card.addEventListener('mouseout', () => card.classList.remove('hover'));
       });
-    })
-    .catch(error => {
-      console.error('Error fetching events:', error);
+
+    } catch (error) {
+      console.error('❌ Error fetching volunteer events:', error);
       document.querySelectorAll('.card__details').forEach(el => {
-        el.innerHTML = `<div class="event-item">
-          <p><strong>Error:</strong> Could not load events</p>
-        </div>`;
+        if (el) {
+          el.innerHTML = `<div class="event-item">
+            <p><strong>Error:</strong> Could not load events. ${error.message}</p>
+            <button onclick="location.reload()" class="retry-btn">Retry</button>
+          </div>`;
+        }
       });
-    });
+    }
+  }
 
   // Volunteer in other Event button handler
-  console.log('User USN:', sessionStorage.getItem('userUSN')); // Debug authentication
   const button = document.querySelector('#volunteerOtherEvent');
-  console.log('Button found:', button); // Debug button
   if (button) {
     button.addEventListener('click', () => {
-      console.log('Volunteer button clicked'); // Debug click
+      console.log('🤝 Volunteer button clicked');
       try {
         window.location.assign('/volunteer_events.html');
-        console.log('Navigation attempted to /volunteer_events.html');
+        console.log('🔄 Navigation attempted to /volunteer_events.html');
       } catch (error) {
-        console.error('Navigation error:', error);
+        console.error('❌ Navigation error:', error);
       }
     });
   } else {
-    console.error('Volunteer button not found');
+    // Fallback: look for any button in button-container
+    const fallbackButton = document.querySelector('.button-container button');
+    if (fallbackButton) {
+      fallbackButton.addEventListener('click', () => {
+        console.log('🤝 Fallback volunteer button clicked');
+        window.location.href = '/volunteer_events.html';
+      });
+    } else {
+      console.error('❌ Volunteer button not found');
+    }
   }
 
-  // Logout functionality
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    try {
-      const response = await fetch('https://epass-backend.onrender.com/api/signout', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+  // Enhanced logout functionality
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        console.log('🚪 Logging out...');
+        
+        const response = await fetch(`${API_BASE}/api/signout`, {
+          method: 'POST',
+          credentials: 'include', // CRITICAL: Include credentials
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
 
-      const data = await response.json();
-      
-      if (data.success) {
-        window.location.href = '/';
-      } else {
+        const data = await response.json();
+        console.log('🚪 Logout response:', data);
+        
+        if (data.success) {
+          console.log('✅ Logout successful, redirecting...');
+          window.location.href = '/';
+        } else {
+          alert('Error logging out. Please try again.');
+        }
+      } catch (error) {
+        console.error('❌ Logout error:', error);
         alert('Error logging out. Please try again.');
       }
-    } catch (error) {
-      console.error('Logout error:', error);
-      alert('Error logging out. Please try again.');
-    }
-  });
+    });
+  }
 });
