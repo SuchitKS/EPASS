@@ -22,7 +22,7 @@ app.use(cors({
 // Session configuration
 
 app.use(session({
-  name='connect.sid',
+  name:'connect.sid',
   secret: process.env.SESSION_SECRET || 'your-event-management-secret-key',
   resave: false,
   saveUninitialized: false,
