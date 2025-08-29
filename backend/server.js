@@ -14,8 +14,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 app.use(cors({
-    origin: ['https://epass-rff5.onrender.com', 'http://localhost:3000', 'http://localhost:5173'], // Allow multiple origins
-    credentials: true // Allow cookies/credentials
+    origin: 'https://epass-rff5.onrender.com',
+    credentials: true 
 }));
 
 
@@ -27,7 +27,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,            // always true because you’re on HTTPS (Render enforces it)
+    secure: false,            // always true because you’re on HTTPS (Render enforces it)
     httpOnly: true,
     sameSite: 'None',        // must be exactly "None" for cross-origin
     maxAge: 24 * 60 * 60 * 1000
