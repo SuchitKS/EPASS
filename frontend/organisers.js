@@ -1,4 +1,50 @@
 document.addEventListener('DOMContentLoaded', function () {
+  const API_BASE = 'https://epass-backend.onrender.com';
+
+  // Enhanced authentication check
+  async function checkAuthStatus() {
+    try {
+      console.log('🔐 Checking auth status for organisers page...');
+      const response = await fetch(`${API_BASE}/api/me`, {
+        method: 'GET',
+        credentials: 'include', // CRITICAL: Include credentials
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('🔐 Auth response status:', response.status);
+      
+      if (response.status === 401) {
+        console.log('❌ User not authenticated, redirecting to login');
+        window.location.href = '/';
+        return false;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const userData = await response.json();
+      console.log('✅ User authenticated:', userData);
+      return true;
+    } catch (error) {
+      console.error('❌ Auth check failed:', error);
+      window.location.href = '/';
+      return false;
+    }
+  }
+
+  // Check authentication before proceeding
+  checkAuthStatus().then(isAuthenticated => {
+    if (!isAuthenticated) {
+      return; // User will be redirected
+    }
+    
+    // If authenticated, proceed with loading events
+    loadOrganizedEvents();
+  });
+
   // Formatting functions
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
@@ -69,36 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = `/ticket.html?eventId=${eventId}`;
   }
 
-  // Logout functionality
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    try {
-      const response = await fetch('https://epass-backend.onrender.com/api/signout', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        // Redirect to login page
-        window.location.href = '/';
-      } else {
-        alert('Error logging out. Please try again.');
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-      alert('Error logging out. Please try again.');
-    }
-  });
-
-  // Back button functionality
-  document.getElementById('backBtn').addEventListener('click', () => {
-    window.location.href = '/events.html';
-  });
-
   // Update card contents with organized events categorized by date
   function updateCards(events) {
     const currentDate = new Date().toISOString().split('T')[0];
@@ -122,8 +138,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     ['ongoing', 'completed', 'upcoming'].forEach(type => {
       const card = document.getElementById(`${type}-card`);
-      const detailsContainer = card.querySelector('.card__details');
-      detailsContainer.innerHTML = createEventHTML(categorizedEvents[type], type);
+      if (card) {
+        const detailsContainer = card.querySelector('.card__details');
+        if (detailsContainer) {
+          detailsContainer.innerHTML = createEventHTML(categorizedEvents[type], type);
+        }
+      }
     });
 
     // Add event listeners to all event buttons
@@ -137,24 +157,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Fetch and display organized events data (only events organized by the logged-in user)
-  fetch('https://epass-backend.onrender.com/api/my-organized-events',{
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' }}
-       )
-    .then(response => {
-      if (!response.ok) {
-        if (response.status === 401) {
-          // User not authenticated, redirect to login
-          window.location.href = '/';
-          return;
+  // Load organized events with enhanced error handling
+  async function loadOrganizedEvents() {
+    try {
+      console.log('📊 Loading organized events...');
+      
+      const response = await fetch(`${API_BASE}/api/my-organized-events`, {
+        method: 'GET',
+        credentials: 'include', // CRITICAL: Include credentials
+        headers: {
+          'Content-Type': 'application/json'
         }
-        throw new Error('Network response was not ok');
+      });
+
+      console.log('📊 Organized events response status:', response.status);
+
+      if (response.status === 401) {
+        console.log('❌ Unauthorized - redirecting to login');
+        window.location.href = '/';
+        return;
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Organized events data:', data);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('📊 Organized events data:', data);
       
       // Update cards with the organized events
       updateCards(data.organizerEvents || []);
@@ -164,21 +193,64 @@ document.addEventListener('DOMContentLoaded', function () {
         card.addEventListener('mouseover', () => card.classList.add('hover'));
         card.addEventListener('mouseout', () => card.classList.remove('hover'));
       });
-    })
-    .catch(error => {
-      console.error('Error:', error);
+
+    } catch (error) {
+      console.error('❌ Error fetching organized events:', error);
       document.querySelectorAll('.card__details').forEach(el => {
-        el.innerHTML = `<div class="event-item">
-          <p><strong>Error:</strong> Could not load organized events</p>
-        </div>`;
+        if (el) {
+          el.innerHTML = `<div class="event-item">
+            <p><strong>Error:</strong> Could not load organized events. ${error.message}</p>
+            <button onclick="location.reload()" class="retry-btn">Retry</button>
+          </div>`;
+        }
       });
-    });
+    }
+  }
 
   // Organize Event button handler
   const button = document.querySelector('.button-container button');
   if (button) {
     button.addEventListener('click', () => {
       window.location.href = '/event_form.html';
+    });
+  }
+
+  // Back button functionality
+  const backBtn = document.getElementById('backBtn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      window.location.href = '/events.html';
+    });
+  }
+
+  // Enhanced logout functionality
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        console.log('🚪 Logging out...');
+        
+        const response = await fetch(`${API_BASE}/api/signout`, {
+          method: 'POST',
+          credentials: 'include', // CRITICAL: Include credentials
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+        console.log('🚪 Logout response:', data);
+        
+        if (data.success) {
+          console.log('✅ Logout successful, redirecting...');
+          window.location.href = '/';
+        } else {
+          alert('Error logging out. Please try again.');
+        }
+      } catch (error) {
+        console.error('❌ Logout error:', error);
+        alert('Error logging out. Please try again.');
+      }
     });
   }
 });
