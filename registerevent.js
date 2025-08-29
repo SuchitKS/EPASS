@@ -1,5 +1,5 @@
 // Get individual event details (protected route)
-app.get('/api/events/:eventId', requireAuth, async (req, res) => {
+app.get('https://epass-backend.onrender.com/api/events/:eventId', requireAuth, async (req, res) => {
   try {
     const eventId = req.params.eventId;
     
@@ -47,4 +47,5 @@ app.get('/api/events/:eventId', requireAuth, async (req, res) => {
     console.error('Error fetching event details:', err);
     res.status(500).json({ error: 'Error fetching event details: ' + err.message });
   }
+
 });
