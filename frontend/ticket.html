@@ -449,6 +449,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
+            const API_BASE = 'https://epass-backend.onrender.com';
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('eventId');
             
@@ -486,9 +487,10 @@
 
             async function fetchUserData() {
                 try {
-                    const response = await fetch('/api/me', {
+                    const response = await fetch(`${API_BASE}/api/me`, {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include'
                     });
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: Failed to fetch user data`);
@@ -513,9 +515,10 @@
 
                 try {
                     console.log('Fetching event from endpoint: /api/events/' + eventId);
-                    const response = await fetch(`/api/events/${eventId}`, {
+                    const response = await fetch(`${API_BASE}/api/events/${eventId}`, {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include'
                     });
                     
                     if (!response.ok) {

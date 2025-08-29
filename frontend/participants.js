@@ -127,11 +127,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Fetch and display event data
   fetch(`${API_BASE}/api/my-participant-events`, {
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include'
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
     .then(response => {
       if (!response.ok) {
+        if (response.status === 401) {
+          console.log('Unauthorized - redirecting to login');
+          window.location.href = '/';
+          return;
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return response.json();
@@ -182,16 +190,15 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const response = await fetch(`${API_BASE}/api/signout`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
-          },
-          credentials: 'include'
+          }
         });
 
         const data = await response.json();
         
         if (data.success) {
-          // Redirect to login page
           window.location.href = '/';
         } else {
           alert('Error logging out. Please try again.');

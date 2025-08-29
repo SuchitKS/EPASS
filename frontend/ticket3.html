@@ -497,6 +497,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const API_BASE = 'https://epass-backend.onrender.com';
             // Get event ID from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const eventId = urlParams.get('eventId');
@@ -541,7 +542,10 @@
                 
                 try {
                     console.log('Trying to fetch participant events...');
-                    const response = await fetch('/api/my-participant-events');
+                    const response = await fetch(`${API_BASE}/api/my-participant-events`, {
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include'
+                    });
                     if (response.ok) {
                         const data = await response.json();
                         console.log('All participant events:', data);

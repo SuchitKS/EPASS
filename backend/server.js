@@ -14,20 +14,20 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 app.use(cors({
-    origin: 'https://epass-rff5.onrender.com', // Allow only your frontend origin
+    origin: ['https://epass-rff5.onrender.com', 'http://localhost:3000', 'http://localhost:5173'], // Allow multiple origins
     credentials: true // Allow cookies/credentials
 }));
 
 
 // Session configuration
 app.use(session({
-    secret: 'your-event-management-secret-key',
+    secret: process.env.SESSION_SECRET || 'your-event-management-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: true,       // use HTTPS in production
+        secure: process.env.NODE_ENV === 'production',       // use HTTPS only in production
         httpOnly: true,     // prevents JS from reading cookie
-        sameSite: 'none',   // required for cross-origin
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',   // required for cross-origin in production
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
@@ -120,6 +120,8 @@ app.post('/api/signup', async (req, res) => {
         req.session.userName = name;
         req.session.userEmail = email;
         
+        console.log('Signup - Session created:', req.session);
+        
         res.status(201).json({ 
             success: true,
             message: 'Student registered successfully!', 
@@ -166,6 +168,8 @@ app.post('/api/signin', async (req, res) => {
         req.session.userUSN = student.usn;
         req.session.userName = student.sname;
         req.session.userEmail = student.emailid;
+        
+        console.log('Signin - Session created:', req.session);
         
         res.json({ 
             success: true, 

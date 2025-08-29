@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
   const API_BASE = 'https://epass-backend.onrender.com';
 
+  const API_BASE = 'https://epass-backend.onrender.com';
+
   // Formatting functions
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
@@ -107,6 +109,9 @@ document.addEventListener('DOMContentLoaded', function () {
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include'
   })
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include'
+  })
     .then(response => {
       if (!response.ok) {
         if (response.status === 401) {
@@ -160,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const response = await fetch(`${API_BASE}/api/signout`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },

@@ -176,7 +176,7 @@
                 return;
             }
 
-            const qrText = `http://localhost:3000/api/scan-qr?usn=${usn}&eid=${eventId}`;
+            const qrText = `https://epass-backend.onrender.com/api/scan-qr?usn=${usn}&eid=${eventId}`;
             new QRCode(document.getElementById('qrcode'), {
                 text: qrText,
                 width: 180,
