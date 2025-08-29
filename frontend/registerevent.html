@@ -82,19 +82,56 @@
     </div>
 
     <script>
-      const API_BASE = 'https://epass-backend.onrender.com';
-      const API_BASE = 'https://epass-backend.onrender.com';
+      const API_BASE = 'https://epass-backend.onrender.com'; // FIXED: Single declaration
       let allEvents = [];
       let currentFilter = 'all';
 
+      // Enhanced authentication check
+      async function checkAuthStatus() {
+        try {
+          console.log('Checking auth status...');
+          const response = await fetch(`${API_BASE}/api/me`, {
+            method: 'GET',
+            credentials: 'include', // CRITICAL: Include credentials
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (response.status === 401) {
+            console.log('User not authenticated, redirecting to login');
+            window.location.href = '/';
+            return false;
+          }
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const userData = await response.json();
+          console.log('User authenticated:', userData);
+          return true;
+        } catch (error) {
+          console.error('Auth check failed:', error);
+          window.location.href = '/';
+          return false;
+        }
+      }
+
       // Load all events from server
       async function loadAllEvents() {
+        // Check authentication first
+        const isAuthenticated = await checkAuthStatus();
+        if (!isAuthenticated) {
+          return; // User will be redirected
+        }
+
         showLoading();
 
         try {
           const response = await fetch(`${API_BASE}/api/events`, {
             method: 'GET',
-            credentials: 'include',
+            credentials: 'include', // CRITICAL: Include credentials
             headers: {
               'Content-Type': 'application/json'
             }
@@ -262,12 +299,12 @@
         }
       }
 
-      // Register for event
+      // Register for event with enhanced error handling
       async function registerForEvent(eventId) {
         try {
           const response = await fetch(`${API_BASE}/api/events/${eventId}/join`, {
             method: 'POST',
-            credentials: 'include',
+            credentials: 'include', // CRITICAL: Include credentials
             headers: {
               'Content-Type': 'application/json'
             }
@@ -280,6 +317,10 @@
             // Reload events to update UI
             loadAllEvents();
           } else {
+            if (response.status === 401) {
+              window.location.href = '/';
+              return;
+            }
             alert('❌ ' + (data.error || 'Registration failed'));
           }
           
@@ -331,5 +372,4 @@
       document.addEventListener('DOMContentLoaded', loadAllEvents);
     </script>
   </body>
-
 </html>
