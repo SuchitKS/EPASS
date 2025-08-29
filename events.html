@@ -62,8 +62,9 @@
     // Logout functionality
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
-        const response = await fetch('/api/signout', {
+        const response = await fetch('https://epass-backend.onrender.com/api/signout', {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
           }
@@ -84,4 +85,5 @@
     });
   </script>
 </body>
+
 </html>
