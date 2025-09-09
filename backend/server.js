@@ -73,21 +73,31 @@ function requireAuthHTML(req, res, next) {
     }
 }
 
-// Serve public static files (CSS, JS, images) without auth
-app.use('/css', express.static(path.join(__dirname, 'css')));
-app.use('/js', express.static(path.join(__dirname, 'js')));
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
-
-// Serve individual CSS and JS files
-app.get('/*.css', (req, res) => {
-    const filePath = path.join(__dirname, req.path);
-    res.sendFile(filePath);
-});
-
-app.get('/*.js', (req, res) => {
-    const filePath = path.join(__dirname, req.path);
-    res.sendFile(filePath);
+// Middleware to serve static files (CSS, JS, images) without authentication
+app.use((req, res, next) => {
+    // Allow CSS, JS, and image files to be served without authentication
+    if (req.path.endsWith('.css') || 
+        req.path.endsWith('.js') || 
+        req.path.endsWith('.png') || 
+        req.path.endsWith('.jpg') || 
+        req.path.endsWith('.jpeg') || 
+        req.path.endsWith('.gif') || 
+        req.path.endsWith('.svg') || 
+        req.path.endsWith('.ico') ||
+        req.path.startsWith('/css/') ||
+        req.path.startsWith('/js/') ||
+        req.path.startsWith('/assets/') ||
+        req.path.startsWith('/images/')) {
+        
+        const filePath = path.join(__dirname, req.path);
+        return res.sendFile(filePath, (err) => {
+            if (err) {
+                console.log(`File not found: ${filePath}`);
+                next(); // Continue to next middleware if file not found
+            }
+        });
+    }
+    next();
 });
 
 // PUBLIC HTML routes (no authentication required)
