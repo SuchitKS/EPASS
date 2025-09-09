@@ -105,38 +105,38 @@ app.use((req, res, next) => {
 
 
 app.get('/index.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname,'../frontend', 'index.html'));
 });
 
 // PROTECTED HTML routes (authentication required)
 app.get('/participants.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving participants.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'participants.html'));
+    res.sendFile(path.join(__dirname,'../frontend', 'participants.html'));
 });
 
 app.get('/registerevent.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving registerevent.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'registerevent.html'));
+    res.sendFile(path.join(__dirname,'../frontend', 'registerevent.html'));
 });
 
 app.get('/ticket3.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving ticket3.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'ticket3.html'));
+    res.sendFile(path.join(__dirname,'../frontend', 'ticket3.html'));
 });
 
-app.get('/dashboard.html', requireAuthHTML, (req, res) => {
-    console.log('✅ Serving dashboard.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'dashboard.html'));
+app.get('/organiseres.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving event_form.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname,'../frontend', 'dashboard.html'));
 });
 
-app.get('/myevents.html', requireAuthHTML, (req, res) => {
+app.get('/events.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving myevents.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'myevents.html'));
+    res.sendFile(path.join(__dirname, '../frontend','myevents.html'));
 });
 
-app.get('/createevent.html', requireAuthHTML, (req, res) => {
+app.get('/event_form.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving createevent.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'createevent.html'));
+    res.sendFile(path.join(__dirname,'../frontend', 'createevent.html'));
 });
 
 // Add other protected HTML files as needed
@@ -151,7 +151,7 @@ app.get('/', (req, res) => {
         res.redirect('/participants.html');
     } else {
         console.log('🔓 Unauthenticated user accessing root - serving login');
-        res.sendFile(path.join(__dirname, '/index.html'));
+        res.sendFile(path.join(__dirname,'../frontend', '/index.html'));
     }
 });
 
