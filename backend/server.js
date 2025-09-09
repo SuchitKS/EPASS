@@ -73,7 +73,7 @@ function requireAuthHTML(req, res, next) {
     }
 }
 
-// Middleware to serve static files (CSS, JS, images) without authentication
+// FIXED: Middleware to serve static files (CSS, JS, images) without authentication
 app.use((req, res, next) => {
     // Allow CSS, JS, and image files to be served without authentication
     if (req.path.endsWith('.css') || 
@@ -89,6 +89,7 @@ app.use((req, res, next) => {
         req.path.startsWith('/assets/') ||
         req.path.startsWith('/images/')) {
         
+        // FIXED: Correct path to frontend directory
         const filePath = path.join(__dirname, '../frontend', req.path);
         return res.sendFile(filePath, (err) => {
             if (err) {
@@ -100,54 +101,95 @@ app.use((req, res, next) => {
     next();
 });
 
-// PUBLIC HTML routes (no authentication required)
+// FIXED: PUBLIC HTML routes (no authentication required) - corrected paths
 app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
+    res.sendFile(path.join(__dirname, '../frontend/login.html'));
 });
 
 app.get('/signup.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'signup.html'));
+    res.sendFile(path.join(__dirname, '../frontend/signup.html'));
 });
 
 app.get('/index.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-// PROTECTED HTML routes (authentication required)
+// FIXED: PROTECTED HTML routes (authentication required) - corrected paths
 app.get('/participants.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving participants.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'participants.html'));
+    res.sendFile(path.join(__dirname, '../frontend/participants.html'));
 });
 
 app.get('/registerevent.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving registerevent.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'registerevent.html'));
+    res.sendFile(path.join(__dirname, '../frontend/registerevent.html'));
 });
 
 app.get('/ticket3.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving ticket3.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'ticket3.html'));
+    res.sendFile(path.join(__dirname, '../frontend/ticket3.html'));
 });
 
 app.get('/dashboard.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving dashboard.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'dashboard.html'));
+    res.sendFile(path.join(__dirname, '../frontend/dashboard.html'));
 });
 
 app.get('/myevents.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving myevents.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'myevents.html'));
+    res.sendFile(path.join(__dirname, '../frontend/myevents.html'));
 });
 
 app.get('/createevent.html', requireAuthHTML, (req, res) => {
     console.log('✅ Serving createevent.html to authenticated user:', req.session.userUSN);
-    res.sendFile(path.join(__dirname, 'createevent.html'));
+    res.sendFile(path.join(__dirname, '../frontend/createevent.html'));
 });
 
-// Add other protected HTML files as needed
-// app.get('/your-protected-file.html', requireAuthHTML, (req, res) => {
-//     res.sendFile(path.join(__dirname, 'your-protected-file.html'));
-// });
+// FIXED: Add routes for other HTML files that might be accessed
+app.get('/events.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving events.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/events.html'));
+});
+
+app.get('/organisers.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving organisers.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/organisers.html'));
+});
+
+app.get('/volunteers.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving volunteers.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/volunteers.html'));
+});
+
+app.get('/volunteer_events.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving volunteer_events.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/volunteer_events.html'));
+});
+
+app.get('/ticket.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving ticket.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/ticket.html'));
+});
+
+app.get('/ticket2.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving ticket2.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/ticket2.html'));
+});
+
+app.get('/qr.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving qr.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/qr.html'));
+});
+
+app.get('/scanner.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving scanner.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/scanner.html'));
+});
+
+app.get('/event_form.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving event_form.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/event_form.html'));
+});
 
 // Root route - redirect based on authentication
 app.get('/', (req, res) => {
@@ -156,7 +198,7 @@ app.get('/', (req, res) => {
         res.redirect('/participants.html');
     } else {
         console.log('🔓 Unauthenticated user accessing root - serving login');
-        res.sendFile(path.join(__dirname, 'login.html'));
+        res.sendFile(path.join(__dirname, '../frontend/login.html'));
     }
 });
 
