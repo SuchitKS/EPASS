@@ -101,9 +101,6 @@ app.use((req, res, next) => {
 });
 
 // PUBLIC HTML routes (no authentication required)
-app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-});
 
 app.get('/signup.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
