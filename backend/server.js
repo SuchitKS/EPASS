@@ -89,7 +89,7 @@ app.use((req, res, next) => {
         req.path.startsWith('/assets/') ||
         req.path.startsWith('/images/')) {
         
-        const filePath = path.join(__dirname, req.path);
+        const filePath = path.join(__dirname, '../frontend', req.path);
         return res.sendFile(filePath, (err) => {
             if (err) {
                 console.log(`File not found: ${filePath}`);
