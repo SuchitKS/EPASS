@@ -178,16 +178,7 @@ app.get('/scanner.html', requireAuthHTML, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/scanner.html'));
 });
 
-// Legacy routes that might still be referenced (just in case)
-app.get('/login.html', (req, res) => {
-    // Redirect to index.html since that's your actual login page
-    res.redirect('/');
-});
-
-app.get('/signup.html', (req, res) => {
-    // Redirect to index.html since signup is part of your login page
-    res.redirect('/');
-});
+// No legacy login/signup routes needed since they don't exist in frontend
 
 // API Status endpoint
 app.get('/api/status', (req, res) => {
