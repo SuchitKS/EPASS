@@ -151,7 +151,7 @@ app.get('/', (req, res) => {
         res.redirect('/participants.html');
     } else {
         console.log('🔓 Unauthenticated user accessing root - serving login');
-        res.sendFile(path.join(__dirname, 'login.html'));
+        res.sendFile(path.join(__dirname, 'index.html'));
     }
 });
 
