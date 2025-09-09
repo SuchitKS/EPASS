@@ -766,7 +766,6 @@ app.get('/api/clubs', requireAuth, async (req, res) => {
     }
 });
 
-
 // Join event as participant
 app.post('/api/events/:eventId/join', requireAuth, async (req, res) => {
     try {
