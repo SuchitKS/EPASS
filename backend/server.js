@@ -69,7 +69,7 @@ function requireAuthHTML(req, res, next) {
         next();
     } else {
         console.log('❌ HTML Authentication failed - redirecting to login');
-        res.redirect('/login.html');
+        res.redirect('/index.html');
     }
 }
 
@@ -102,9 +102,7 @@ app.use((req, res, next) => {
 
 // PUBLIC HTML routes (no authentication required)
 
-app.get('/signup.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'signup.html'));
-});
+
 
 app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
