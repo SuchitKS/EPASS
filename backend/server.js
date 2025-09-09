@@ -14,7 +14,6 @@ app.set('trust proxy', 1);
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
 
 app.use(cors({
     origin: 'https://epass-rff5.onrender.com',
@@ -61,12 +60,103 @@ function requireAuth(req, res, next) {
     }
 }
 
-// Serve login page as default
+// Middleware to check authentication for HTML files (redirects instead of JSON error)
+function requireAuthHTML(req, res, next) {
+    console.log('🔐 HTML Auth check - Session:', req.session);
+    console.log('🔐 HTML Auth check - UserUSN:', req.session.userUSN);
+    
+    if (req.session.userUSN) {
+        next();
+    } else {
+        console.log('❌ HTML Authentication failed - redirecting to login');
+        res.redirect('/login.html');
+    }
+}
+
+// Serve public static files (CSS, JS, images) without auth
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+// Serve individual CSS and JS files
+app.get('/*.css', (req, res) => {
+    const filePath = path.join(__dirname, req.path);
+    res.sendFile(filePath);
+});
+
+app.get('/*.js', (req, res) => {
+    const filePath = path.join(__dirname, req.path);
+    res.sendFile(filePath);
+});
+
+// PUBLIC HTML routes (no authentication required)
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/signup.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'signup.html'));
+});
+
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// PROTECTED HTML routes (authentication required)
+app.get('/participants.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving participants.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, 'participants.html'));
+});
+
+app.get('/registerevent.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving registerevent.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, 'registerevent.html'));
+});
+
+app.get('/ticket3.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving ticket3.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, 'ticket3.html'));
+});
+
+app.get('/dashboard.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving dashboard.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+app.get('/myevents.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving myevents.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, 'myevents.html'));
+});
+
+app.get('/createevent.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving createevent.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, 'createevent.html'));
+});
+
+// Add other protected HTML files as needed
+// app.get('/your-protected-file.html', requireAuthHTML, (req, res) => {
+//     res.sendFile(path.join(__dirname, 'your-protected-file.html'));
+// });
+
+// Root route - redirect based on authentication
 app.get('/', (req, res) => {
+    if (req.session.userUSN) {
+        console.log('✅ Authenticated user accessing root - redirecting to participants');
+        res.redirect('/participants.html');
+    } else {
+        console.log('🔓 Unauthenticated user accessing root - serving login');
+        res.sendFile(path.join(__dirname, 'login.html'));
+    }
+});
+
+// API Status endpoint
+app.get('/api/status', (req, res) => {
     res.json({ 
         message: 'EPASS Backend API is running!', 
         status: 'healthy',
         environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString(),
         endpoints: {
             signup: 'POST /api/signup',
             signin: 'POST /api/signin',
@@ -675,6 +765,7 @@ app.get('/api/clubs', requireAuth, async (req, res) => {
         res.status(500).json({ error: 'Error fetching clubs' });
     }
 });
+
 
 // Join event as participant
 app.post('/api/events/:eventId/join', requireAuth, async (req, res) => {
