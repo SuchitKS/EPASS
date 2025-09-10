@@ -15,32 +15,30 @@ app.set('trust proxy', 1);
 // Middleware
 app.use(express.json());
 
-// CORS configuration - Allow your frontend URL
 app.use(cors({
-    origin: [
-        'https://epass-rff5.onrender.com',  // Your frontend URL
-        'http://localhost:3000',            // Local development
-        'http://localhost:5173',            // Vite dev server
-        'http://localhost:8080'             // Other local ports
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: 'https://epass-rff5.onrender.com', // Frontend URL
+    credentials: true 
 }));
 
 // Session configuration
 app.use(session({
-  name: 'connect.sid',
-  secret: process.env.SESSION_SECRET || 'your-event-management-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
+    name: 'connect.sid',
+    secret: process.env.SESSION_SECRET || 'your-event-management-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
+
+// Serve static files from frontend directory
+app.use('/css', express.static(path.join(__dirname, '../frontend/css')));
+app.use('/js', express.static(path.join(__dirname, '../frontend/js')));
+app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
+app.use('/images', express.static(path.join(__dirname, '../frontend/images')));
 
 // Test Supabase connection
 async function testSupabaseConnection() {
@@ -58,6 +56,7 @@ testSupabaseConnection();
 function requireAuth(req, res, next) {
     console.log('🔐 Auth check - Session:', req.session);
     console.log('🔐 Auth check - UserUSN:', req.session.userUSN);
+    console.log('🔐 Auth check - Session ID:', req.sessionID);
     
     if (req.session.userUSN) {
         next();
@@ -67,17 +66,98 @@ function requireAuth(req, res, next) {
     }
 }
 
-// BACKEND API ROUTES ONLY - NO HTML SERVING
+// Middleware to check authentication for HTML files
+function requireAuthHTML(req, res, next) {
+    console.log('🔐 HTML Auth check - Session:', req.session);
+    console.log('🔐 HTML Auth check - UserUSN:', req.session.userUSN);
+    
+    if (req.session.userUSN) {
+        next();
+    } else {
+        console.log('❌ HTML Authentication failed - redirecting to login');
+        res.redirect('/app/index.html');
+    }
+}
 
-// Root route for backend - API status
+// PUBLIC HTML routes (no authentication required)
+app.get('/app/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+// Root route
 app.get('/', (req, res) => {
     res.json({
-        message: 'EPASS Backend API',
-        status: 'running',
-        environment: process.env.NODE_ENV || 'development',
-        timestamp: new Date().toISOString(),
-        docs: 'This is the backend API server. Frontend is served separately.'
+        message: 'Welcome to the EPASS Backend API',
+        status: 'healthy',
+        endpoints: {
+            status: '/api/status',
+            signup: '/api/signup',
+            signin: '/api/signin',
+            events: '/api/events',
+            students: '/api/students'
+        }
     });
+});
+
+// PROTECTED HTML routes (authentication required)
+app.get('/app/participants.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving participants.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/participants.html'));
+});
+
+app.get('/app/registerevent.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving registerevent.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/registerevent.html'));
+});
+
+app.get('/app/organisers.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving organisers.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/organisers.html'));
+});
+
+app.get('/app/volunteers.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving volunteers.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/volunteers.html'));
+});
+
+app.get('/app/volunteer_events.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving volunteer_events.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/volunteer_events.html'));
+});
+
+app.get('/app/event_form.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving event_form.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/event_form.html'));
+});
+
+app.get('/app/events.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving events.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/events.html'));
+});
+
+app.get('/app/ticket.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving ticket.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/ticket.html'));
+});
+
+app.get('/app/ticket2.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving ticket2.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/ticket2.html'));
+});
+
+app.get('/app/ticket3.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving ticket3.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/ticket3.html'));
+});
+
+app.get('/app/qr.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving qr.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/qr.html'));
+});
+
+app.get('/app/scanner.html', requireAuthHTML, (req, res) => {
+    console.log('✅ Serving scanner.html to authenticated user:', req.session.userUSN);
+    res.sendFile(path.join(__dirname, '../frontend/scanner.html'));
 });
 
 // API Status endpoint
@@ -91,21 +171,7 @@ app.get('/api/status', (req, res) => {
             signup: 'POST /api/signup',
             signin: 'POST /api/signin',
             events: 'GET /api/events',
-            students: 'GET /api/students',
-            me: 'GET /api/me',
-            signout: 'POST /api/signout'
-        }
-    });
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.json({
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development',
-        session: {
-            secret: process.env.SESSION_SECRET ? 'configured' : 'using default'
+            students: 'GET /api/students'
         }
     });
 });
@@ -262,23 +328,23 @@ app.get('/api/me', requireAuth, async (req, res) => {
 
 // Sign out endpoint
 app.post('/api/signout', (req, res) => {
-  console.log('🚪 Signout requested - Session:', req.session);
-  
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('❌ Session destroy error:', err);
-      return res.status(500).json({ error: 'Could not sign out' });
-    }
+    console.log('🚪 Signout requested - Session:', req.session);
     
-    res.clearCookie('connect.sid', {
-      path: '/',
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-      secure: process.env.NODE_ENV === 'production'
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('❌ Session destroy error:', err);
+            return res.status(500).json({ error: 'Could not sign out' });
+        }
+        
+        res.clearCookie('connect.sid', {
+            path: '/',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            secure: process.env.NODE_ENV === 'production'
+        });
+        
+        console.log('✅ Signout successful');
+        res.json({ success: true, message: 'Signed out successfully' });
     });
-    
-    console.log('✅ Signout successful');
-    res.json({ success: true, message: 'Signed out successfully' });
-  });
 });
 
 // Get all events
@@ -388,10 +454,9 @@ app.get('/api/my-clubs', requireAuth, async (req, res) => {
     }
 });
 
-// Get user's events (as participant, volunteer, or organizer)
+// Get user's events
 app.get('/api/my-events', requireAuth, async (req, res) => {
     try {
-        // Get participant events
         const { data: participantEvents, error: participantError } = await supabase
             .from('participant')
             .select(`
@@ -402,7 +467,10 @@ app.get('/api/my-events', requireAuth, async (req, res) => {
             `)
             .eq('partusn', req.session.userUSN);
         
-        // Get volunteer events
+        if (participantError) {
+            console.error('Error fetching participant events:', participantError);
+        }
+        
         const { data: volunteerEvents, error: volunteerError } = await supabase
             .from('volunteer')
             .select(`
@@ -413,7 +481,10 @@ app.get('/api/my-events', requireAuth, async (req, res) => {
             `)
             .eq('volnusn', req.session.userUSN);
         
-        // Get organizer events
+        if (volunteerError) {
+            console.error('Error fetching volunteer events:', volunteerError);
+        }
+        
         const { data: organizerEvents, error: organizerError } = await supabase
             .from('event')
             .select(`
@@ -422,7 +493,10 @@ app.get('/api/my-events', requireAuth, async (req, res) => {
             `)
             .eq('orgusn', req.session.userUSN);
         
-        // Transform participant events
+        if (organizerError) {
+            console.error('Error fetching organizer events:', organizerError);
+        }
+        
         const transformedParticipantEvents = (participantEvents || []).map(p => ({
             ...p.event,
             eventDate: p.event?.eventdate,
@@ -433,7 +507,6 @@ app.get('/api/my-events', requireAuth, async (req, res) => {
             role: 'participant'
         })).filter(e => e.eid);
         
-        // Transform volunteer events
         const transformedVolunteerEvents = (volunteerEvents || []).map(v => ({
             ...v.event,
             eventDate: v.event?.eventdate,
@@ -443,7 +516,6 @@ app.get('/api/my-events', requireAuth, async (req, res) => {
             role: 'volunteer'
         })).filter(e => e.eid);
         
-        // Transform organizer events
         const transformedOrganizerEvents = (organizerEvents || []).map(e => ({
             ...e,
             eventDate: e.eventdate,
@@ -714,7 +786,6 @@ app.post('/api/events/:eventId/join', requireAuth, async (req, res) => {
             return res.status(400).json({ error: 'Already joined this event' });
         }
         
-        // Check if participant slots are available
         const { data: event, error: eventError } = await supabase
             .from('event')
             .select('maxpart')
@@ -789,7 +860,6 @@ app.post('/api/events/:eventId/volunteer', requireAuth, async (req, res) => {
             return res.status(400).json({ error: 'Already volunteered for this event' });
         }
         
-        // Check if volunteer slots are available
         const { data: event, error: eventError } = await supabase
             .from('event')
             .select('maxvoln')
@@ -963,7 +1033,6 @@ app.get('/api/events/:eventId', requireAuth, async (req, res) => {
 
         const event = rows[0];
         
-        // Transform the data to match expected format
         const transformedEvent = {
             ...event,
             eventDate: event.eventdate,
@@ -1002,7 +1071,7 @@ app.get('/api/events/:eventId', requireAuth, async (req, res) => {
     }
 });
 
-// Legacy endpoints for backward compatibility
+// Legacy endpoints
 app.get('/students', requireAuth, async (req, res) => {
     try {
         const { data: rows, error } = await supabase
@@ -1014,7 +1083,6 @@ app.get('/students', requireAuth, async (req, res) => {
             return res.status(500).json({ error: 'Database error' });
         }
         
-        // Transform to match legacy format
         const transformedRows = (rows || []).map(row => ({
             USN: row.usn,
             sname: row.sname,
@@ -1050,7 +1118,6 @@ app.get('/events', requireAuth, async (req, res) => {
         };
 
         (rows || []).forEach(event => {
-            // Transform to match legacy format
             const transformedEvent = {
                 eid: event.eid,
                 ename: event.ename,
@@ -1073,27 +1140,24 @@ app.get('/events', requireAuth, async (req, res) => {
     }
 });
 
-// Catch-all for any non-API routes - return API info instead of serving HTML
-app.get('*', (req, res) => {
-    // Don't serve HTML files - this is API-only server
-    res.status(404).json({
-        error: 'Route not found',
-        message: 'This is the backend API server. Frontend is served separately.',
-        availableEndpoints: {
-            root: 'GET /',
-            status: 'GET /api/status',
-            health: 'GET /health',
-            signup: 'POST /api/signup',
-            signin: 'POST /api/signin',
-            me: 'GET /api/me',
-            signout: 'POST /api/signout',
-            events: 'GET /api/events',
-            students: 'GET /api/students'
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        session: {
+            secret: process.env.SESSION_SECRET ? 'configured' : 'using default'
         }
     });
 });
 
-// Catch-all error handler
+// Catch-all for unmatched routes
+app.use((req, res) => {
+    res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handler
 app.use((err, req, res, next) => {
     console.error('💥 Unhandled error:', err);
     res.status(500).json({
@@ -1104,9 +1168,8 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`🚀 Backend API Server running at http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
     console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🔐 Session secret: ${process.env.SESSION_SECRET ? 'configured' : 'using default'}`);
     console.log(`📊 Trust proxy: ${app.get('trust proxy')}`);
-    console.log(`🎯 This is an API-only server. Frontend served separately.`);
 });
