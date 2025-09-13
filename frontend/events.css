@@ -102,11 +102,11 @@ body {
 }
 
 .card--1 .card__img, .card--1 .card__img--hover {
-  background-image: url('./images/part_img.png');
+  background-image: url('https://adminhero.com/wp-content/uploads/2013/01/e698f-volunteers.jpg');
 }
 
 .card--2 .card__img, .card--2 .card__img--hover {
-  background-image: url('./images/org_img.png');
+  background-image: url('https://t4.ftcdn.net/jpg/02/27/45/09/360_F_227450952_KQCMShHPOPebUXklULsKsROk5AvN6H1H.jpg');
 }
 
 .card--3 .card__img, .card--3 .card__img--hover {
@@ -176,6 +176,7 @@ body {
   }
 
 }
+
 
 
 
