@@ -102,11 +102,11 @@ body {
 }
 
 .card--1 .card__img, .card--1 .card__img--hover {
-  background-image: url('/part_img.png');
+  background-image: url('./images/part_img.png');
 }
 
 .card--2 .card__img, .card--2 .card__img--hover {
-  background-image: url('/frontend/images/org_img.png');
+  background-image: url('./images/org_img.png');
 }
 
 .card--3 .card__img, .card--3 .card__img--hover {
@@ -176,6 +176,7 @@ body {
   }
 
 }
+
 
 
 
