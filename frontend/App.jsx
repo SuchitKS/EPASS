@@ -8,7 +8,7 @@ import Volunteers from './Volunteers';
 import EventForm from './EventForm';
 import RegisterEvent from './RegisterEvent';
 import VolunteerEvents from './VolunteerEvents';
-import QRCodePage from './QRCodePage';
+import QRCodePage from './QR';
 import Scanner from './Scanner';
 
 function App() {
@@ -30,5 +30,6 @@ function App() {
     </Router>
   );
 }
+
 
 export default App;
