@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './event_form.css';
+
 
 const API_BASE = 'https://epass-backend.onrender.com';
 
@@ -282,5 +282,6 @@ function EventForm() {
     </div>
   );
 }
+
 
 export default EventForm;
