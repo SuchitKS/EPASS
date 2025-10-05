@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
@@ -41,7 +40,8 @@ function Login() {
         navigate('/events.html')
       }
     } catch (error) {
-      console.log('User not authenticated')
+      console.log('User not authenticated - showing login form')
+      // This is normal - user just needs to log in
     }
   }
 
@@ -228,7 +228,7 @@ function Login() {
   }
 
   return (
-    <div className="container" id="container" style={{ transform: isActive ? 'translateX(-50%)' : 'translateX(0)' }}>
+    <div className={`container ${isActive ? 'active' : ''}`} id="container">
       <div className="form-container sign-up">
         <form onSubmit={handleSignUp}>
           <h1>Create Account</h1>
@@ -314,12 +314,12 @@ function Login() {
           <div className="toggle-panel toggle-left">
             <h1>Welcome Back!</h1>
             <p>Enter your personal details to use all of site features</p>
-            <button className="hidden" id="login" onClick={() => setIsActive(false)}>Sign In</button>
+            <button className="hidden" id="login" type="button" onClick={() => setIsActive(false)}>Sign In</button>
           </div>
           <div className="toggle-panel toggle-right">
             <h1>Hello, Friend!</h1>
             <p>Register with your personal details to Create New Account</p>
-            <button className="hidden" id="register" onClick={() => setIsActive(true)}>Sign Up</button>
+            <button className="hidden" id="register" type="button" onClick={() => setIsActive(true)}>Sign Up</button>
           </div>
         </div>
       </div>
@@ -332,5 +332,3 @@ function Login() {
 }
 
 export default Login
-
-
