@@ -1,37 +1,32 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900');
 
-* {
+/* Only apply these resets to events page */
+.events-page * {
   box-sizing: border-box;
 }
 
-html, body {
+/* Events page wrapper */
+.events-page {
   font-family: 'Roboto Slab', serif;
-  margin: 0;
-  padding: 0;
   width: 100%;
-  height: 100%;
-}
-
-body {
-  background: #00416A;
-  background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);
-  background: linear-gradient(to right, #E4E5E6, #00416A);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  padding: 20px;
 }
 
 /* Logout Button Styles */
-.logout-container {
+.events-page .logout-container {
   position: fixed;
   top: 20px;
   left: 20px;
   z-index: 1000;
 }
 
-.logout-btn {
+.events-page .logout-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -49,49 +44,54 @@ body {
   text-decoration: none;
 }
 
-.logout-btn:hover {
+.events-page .logout-btn:hover {
   background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
 
-.logout-btn:active {
+.events-page .logout-btn:active {
   transform: translateY(0);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
-.logout-btn i {
+.events-page .logout-btn i {
   font-size: 16px;
 }
 
-.cards {
+/* Cards Container */
+.events-page .cards {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 30px;
   max-width: 1020px;
   width: 100%;
   padding: 20px;
 }
 
-.card {
+/* Individual Card */
+.events-page .card {
   background-color: #fff;
   width: 300px;
+  height: 380px;
   position: relative;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0px 13px 10px -7px rgba(0, 0, 0, 0.1);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0, 1);
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
-.card:hover {
+.events-page .card:hover {
   box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
-.card__img,
-.card__img--hover {
-  background-image: linear-gradient(135deg, #5EFCE8 10%, #736EFE 100%);
+/* Card Images */
+.events-page .card__img,
+.events-page .card__img--hover {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -101,84 +101,128 @@ body {
   border-top-right-radius: 12px;
 }
 
-.card--1 .card__img, .card--1 .card__img--hover {
+.events-page .card--1 .card__img, 
+.events-page .card--1 .card__img--hover {
   background-image: url('https://adminhero.com/wp-content/uploads/2013/01/e698f-volunteers.jpg');
 }
 
-.card--2 .card__img, .card--2 .card__img--hover {
+.events-page .card--2 .card__img, 
+.events-page .card--2 .card__img--hover {
   background-image: url('https://t4.ftcdn.net/jpg/02/27/45/09/360_F_227450952_KQCMShHPOPebUXklULsKsROk5AvN6H1H.jpg');
 }
 
-.card--3 .card__img, .card--3 .card__img--hover {
+.events-page .card--3 .card__img, 
+.events-page .card--3 .card__img--hover {
   background-image: url('https://static.vecteezy.com/system/resources/previews/007/227/562/non_2x/volunteering-and-donations-banner-template-cheerful-people-donating-toys-for-children-cartoon-characters-young-volunteers-holding-boxes-with-grocery-products-charity-organization-members-vector.jpg');
 }
 
-.card__img {
+.events-page .card__img {
   visibility: hidden;
 }
 
-.card__img--hover {
+.events-page .card__img--hover {
   position: absolute;
   top: 0;
   z-index: 1;
   transition: 0.2s all ease-out;
 }
 
-.card__info {
+/* Card Info Section */
+.events-page .card__info {
   z-index: 2;
-  background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for better contrast */
+  background-color: rgba(255, 255, 255, 0.95);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
-  padding: 16px 24px 24px 24px;
-  position: relative;
+  padding: 20px 24px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 145px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.card:hover .card__img--hover {
+.events-page .card:hover .card__img--hover {
   height: 100%;
   opacity: 0.3;
 }
 
-.card:hover .card__info {
-  background-color: transparent;
-  position: relative;
+.events-page .card:hover .card__info {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.card__title {
+.events-page .card__title {
   font-size: 1.25rem;
   font-weight: 600;
   color: #333;
   text-align: center;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
 }
 
-.card__icon {
+.events-page .card:hover .card__title {
+  color: #fff;
+}
+
+.events-page .card__icon {
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
   color: #AD7D52;
-  padding: 20px 0 0;
+}
+
+.events-page .card:hover .card__icon {
+  color: #fff;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .logout-container {
+  .events-page {
+    padding: 80px 20px 20px;
+  }
+
+  .events-page .logout-container {
     top: 15px;
     left: 15px;
   }
   
-  .logout-btn {
+  .events-page .logout-btn {
     padding: 10px 16px;
     font-size: 13px;
   }
   
-  .logout-btn i {
+  .events-page .logout-btn i {
     font-size: 14px;
   }
 
+  .events-page .cards {
+    gap: 20px;
+  }
+
+  .events-page .card {
+    width: 100%;
+    max-width: 320px;
+  }
 }
 
+@media (max-width: 480px) {
+  .events-page .card {
+    height: 350px;
+  }
 
+  .events-page .card__img,
+  .events-page .card__img--hover {
+    height: 200px;
+  }
 
+  .events-page .card__info {
+    height: 150px;
+  }
 
-
-
+  .events-page .card__title {
+    font-size: 1.1rem;
+  }
+}
