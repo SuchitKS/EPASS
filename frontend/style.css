@@ -308,6 +308,43 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+/* USN Autocomplete Suggestions */
+.login-page .usn-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.login-page .usn-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.login-page .usn-suggestion-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 13px;
+    color: #333;
+}
+
+.login-page .usn-suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.login-page .usn-suggestion-item:active {
+    background-color: #e0e0e0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .login-page .container {
