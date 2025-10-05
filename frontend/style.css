@@ -27,7 +27,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 50%;
     min-height: 100vh;
     padding: 20px;
 }
@@ -347,4 +347,5 @@ input[type="number"] {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
 
