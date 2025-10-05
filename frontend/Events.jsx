@@ -44,7 +44,7 @@ function Events() {
   }
 
   return (
-    <div>
+    <div className="events-page">
       <div className="logout-container">
         <button id="logoutBtn" className="logout-btn">
           <i className="fas fa-sign-out-alt"></i>
