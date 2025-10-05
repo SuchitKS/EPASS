@@ -17,10 +17,19 @@ body {
   background: #00416A;
   background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);
   background: linear-gradient(to right, #E4E5E6, #00416A);
+  margin: 0;
+  padding: 0;
+}
+
+/* Events page wrapper */
+.events-page {
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  padding: 80px 20px 20px;
 }
 
 /* Logout Button Styles */
@@ -126,7 +135,7 @@ body {
 
 .card__info {
   z-index: 2;
-  background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for better contrast */
+  background-color: rgba(255, 255, 255, 0.9);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
   padding: 16px 24px 24px 24px;
@@ -161,6 +170,10 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .events-page {
+    padding: 70px 15px 15px;
+  }
+
   .logout-container {
     top: 15px;
     left: 15px;
@@ -175,10 +188,13 @@ body {
     font-size: 14px;
   }
 
+  .cards {
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 300px;
+  }
 }
-
-
-
-
-
-
