@@ -1,16 +1,26 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900');
 
-/* Reset for events page */
-.events-page {
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   font-family: 'Roboto Slab', serif;
+  margin: 0;
+  padding: 0;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
+}
+
+body {
+  background: #00416A;
+  background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);
+  background: linear-gradient(to right, #E4E5E6, #00416A);
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 20px;
 }
 
 /* Logout Button Styles */
@@ -54,39 +64,34 @@
   font-size: 16px;
 }
 
-/* Cards Container */
 .cards {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 20px;
   max-width: 1020px;
   width: 100%;
   padding: 20px;
 }
 
-/* Individual Card */
 .card {
   background-color: #fff;
   width: 300px;
-  height: 380px; /* Fixed height to prevent elongation */
   position: relative;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0px 13px 10px -7px rgba(0, 0, 0, 0.1);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0, 1);
-  cursor: pointer;
-  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .card:hover {
   box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
-/* Card Images */
 .card__img,
 .card__img--hover {
+  background-image: linear-gradient(135deg, #5EFCE8 10%, #736EFE 100%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -96,18 +101,15 @@
   border-top-right-radius: 12px;
 }
 
-.card--1 .card__img, 
-.card--1 .card__img--hover {
+.card--1 .card__img, .card--1 .card__img--hover {
   background-image: url('https://adminhero.com/wp-content/uploads/2013/01/e698f-volunteers.jpg');
 }
 
-.card--2 .card__img, 
-.card--2 .card__img--hover {
+.card--2 .card__img, .card--2 .card__img--hover {
   background-image: url('https://t4.ftcdn.net/jpg/02/27/45/09/360_F_227450952_KQCMShHPOPebUXklULsKsROk5AvN6H1H.jpg');
 }
 
-.card--3 .card__img, 
-.card--3 .card__img--hover {
+.card--3 .card__img, .card--3 .card__img--hover {
   background-image: url('https://static.vecteezy.com/system/resources/previews/007/227/562/non_2x/volunteering-and-donations-banner-template-cheerful-people-donating-toys-for-children-cartoon-characters-young-volunteers-holding-boxes-with-grocery-products-charity-organization-members-vector.jpg');
 }
 
@@ -122,21 +124,13 @@
   transition: 0.2s all ease-out;
 }
 
-/* Card Info Section */
 .card__info {
   z-index: 2;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for better contrast */
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
-  padding: 20px 24px;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 145px; /* Fixed height for info section */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding: 16px 24px 24px 24px;
+  position: relative;
 }
 
 .card:hover .card__img--hover {
@@ -145,7 +139,8 @@
 }
 
 .card:hover .card__info {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: transparent;
+  position: relative;
 }
 
 .card__title {
@@ -153,12 +148,6 @@
   font-weight: 600;
   color: #333;
   text-align: center;
-  margin: 0 0 15px 0;
-  line-height: 1.4;
-}
-
-.card:hover .card__title {
-  color: #fff;
 }
 
 .card__icon {
@@ -167,18 +156,11 @@
   align-items: center;
   font-size: 24px;
   color: #AD7D52;
-}
-
-.card:hover .card__icon {
-  color: #fff;
+  padding: 20px 0 0;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .events-page {
-    padding: 80px 20px 20px;
-  }
-
   .logout-container {
     top: 15px;
     left: 15px;
@@ -193,31 +175,10 @@
     font-size: 14px;
   }
 
-  .cards {
-    gap: 20px;
-  }
-
-  .card {
-    width: 100%;
-    max-width: 320px;
-  }
 }
 
-@media (max-width: 480px) {
-  .card {
-    height: 350px;
-  }
 
-  .card__img,
-  .card__img--hover {
-    height: 200px;
-  }
 
-  .card__info {
-    height: 150px;
-  }
 
-  .card__title {
-    font-size: 1.1rem;
-  }
-}
+
+
