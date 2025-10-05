@@ -224,13 +224,12 @@ function Login() {
   }
 
   return (
-    <>
+    <div className="login-page">
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
       />
-      <div className="login-page">
-        <div className={`container${isActive ? ' active' : ''}`}>
+      <div className={`container${isActive ? ' active' : ''}`}>
         <div className="form-container sign-up">
           <form>
             <h1>Create Account</h1>
@@ -314,7 +313,7 @@ function Login() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
