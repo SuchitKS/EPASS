@@ -7,6 +7,11 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
 body {
     background: #00416A;
     background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);  
@@ -14,18 +19,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    min-height: 100vh;
     margin: 0;
     padding: 0;
 }
 
 #root {
-    width: 100%;
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    min-height: 100vh;
     padding: 20px;
 }
 
@@ -36,7 +39,8 @@ body {
     position: relative;
     overflow: hidden;
     width: 768px;
-    max-width: 480px;
+    max-width: 100%;
+    height: 480px;
     min-height: 480px;
 }
 
@@ -105,6 +109,13 @@ body {
     flex-direction: column;
     padding: 0 40px;
     height: 100%;
+}
+
+.container h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
 }
 
 .container input {
@@ -234,6 +245,15 @@ body {
     transition: all 0.6s ease-in-out;
 }
 
+.toggle-panel h1 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.toggle-panel p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 .toggle-left {
     transform: translateX(-200%);
 }
@@ -272,10 +292,22 @@ body {
     background-color: rgb(225, 108, 95);
 }
 
+/* Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
         width: 100%;
+        height: auto;
         min-height: 550px;
     }
     
@@ -301,7 +333,7 @@ body {
     }
 }
 
-/* Loading state (optional) */
+/* Loading state */
 .loading {
     display: inline-block;
     width: 20px;
@@ -315,32 +347,3 @@ body {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
-
-/* Form heading styles */
-.container h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.toggle-panel h1 {
-    color: #fff;
-    margin-bottom: 10px;
-}
-
-.toggle-panel p {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-/* Remove number input arrows */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
