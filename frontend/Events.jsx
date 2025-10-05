@@ -8,13 +8,17 @@ function Events() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Check authentication
-    const userUSN = sessionStorage.getItem('userUSN')
-    if (!userUSN) {
-      navigate('/')
-      return
+    const logoutBtn = document.getElementById('logoutBtn')
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', handleLogout)
     }
-  }, [navigate])
+
+    return () => {
+      if (logoutBtn) {
+        logoutBtn.removeEventListener('click', handleLogout)
+      }
+    }
+  }, [])
 
   const handleLogout = async () => {
     try {
@@ -29,7 +33,6 @@ function Events() {
       const data = await response.json()
 
       if (data.success) {
-        sessionStorage.clear()
         navigate('/')
       } else {
         alert('Error logging out. Please try again.')
@@ -40,58 +43,57 @@ function Events() {
     }
   }
 
-  const handleCardClick = (path) => {
-    navigate(path)
-  }
-
   return (
-    <>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-      
-      <div className="events-page">
-        <div className="logout-container">
-          <button onClick={handleLogout} className="logout-btn">
-            <i className="fas fa-sign-out-alt"></i>
-            Logout
-          </button>
-        </div>
-
-        <section className="cards">
-          <article className="card card--1" onClick={() => handleCardClick('/participants.html')}>
-            <div className="card__img"></div>
-            <div className="card__img--hover"></div>
-            <div className="card__info">
-              <h3 className="card__title">Events participated by you</h3>
-              <div className="card__icon">
-                <i className="fa-solid fa-plus"></i>
-              </div>
-            </div>
-          </article>
-
-          <article className="card card--2" onClick={() => handleCardClick('/organisers.html')}>
-            <div className="card__img"></div>
-            <div className="card__img--hover"></div>
-            <div className="card__info">
-              <h3 className="card__title">Events organised by you</h3>
-              <div className="card__icon">
-                <i className="fa-solid fa-plus"></i>
-              </div>
-            </div>
-          </article>
-
-          <article className="card card--3" onClick={() => handleCardClick('/volunteers.html')}>
-            <div className="card__img"></div>
-            <div className="card__img--hover"></div>
-            <div className="card__info">
-              <h3 className="card__title">Events volunteered by you</h3>
-              <div className="card__icon">
-                <i className="fa-solid fa-plus"></i>
-              </div>
-            </div>
-          </article>
-        </section>
+    <div>
+      <div className="logout-container">
+        <button id="logoutBtn" className="logout-btn">
+          <i className="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
       </div>
-    </>
+
+      <section className="cards">
+        <article className="card card--1">
+          <div className="card__img"></div>
+          <a href="/participants.html" className="card_link">
+            <div className="card__img--hover"></div>
+          </a>
+          <div className="card__info">
+            <h3 className="card__title">Events participated by you</h3>
+            <div className="card__icon">
+              <i className="fa-solid fa-plus"></i>
+            </div>
+          </div>
+        </article>
+
+        <article className="card card--2">
+          <div className="card__img"></div>
+          <a href="/organisers.html" className="card_link">
+            <div className="card__img--hover"></div>
+          </a>
+          <div className="card__info">
+            <h3 className="card__title">Events organised by you</h3>
+            <div className="card__icon">
+              <i className="fa-solid fa-plus"></i>
+            </div>
+          </div>
+        </article>
+
+        <article className="card card--3">
+          <div className="card__img"></div>
+          <a href="/volunteers.html" className="card_link">
+            <div className="card__img--hover"></div>
+          </a>
+          <div className="card__info">
+            <h3 className="card__title">Events volunteered by you</h3>
+            <div className="card__icon">
+              <i className="fa-solid fa-plus"></i>
+            </div>
+          </div>
+        </article>
+      </section>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    </div>
   )
 }
 
