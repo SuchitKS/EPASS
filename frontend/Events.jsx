@@ -7,6 +7,14 @@ const API_BASE = 'https://epass-backend.onrender.com'
 function Events() {
   const navigate = useNavigate()
 
+  // Reset body styles to prevent conflicts from login page
+  useEffect(() => {
+    document.body.style.display = ''
+    document.body.style.alignItems = ''
+    document.body.style.justifyContent = ''
+    document.body.style.overflow = ''
+  }, [])
+
   useEffect(() => {
     const logoutBtn = document.getElementById('logoutBtn')
     if (logoutBtn) {
@@ -44,8 +52,9 @@ function Events() {
   }
 
   return (
-    <div className="events-page">
-      <div className="logout-container">
+    <>
+      <div className="events-page">
+        <div className="logout-container">
         <button id="logoutBtn" className="logout-btn">
           <i className="fas fa-sign-out-alt"></i>
           Logout
@@ -92,8 +101,10 @@ function Events() {
           </div>
         </article>
       </section>
+      
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    </div>
+      </div>
+    </>
   )
 }
 
