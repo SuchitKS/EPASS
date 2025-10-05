@@ -193,7 +193,35 @@ function VolunteerEvents() {
         </div>
         <div className="event-actions">
           {remainingVolunteers > 0 ? (
-            <button onClick={() => handleVolunteer(event.eid)}>Volunteer</button>
+            <button 
+              onClick={() => handleVolunteer(event.eid)}
+              style={{
+                fontSize: '15px',
+                padding: '0.7em 2.7em',
+                letterSpacing: '0.06em',
+                position: 'relative',
+                fontFamily: 'inherit',
+                borderRadius: '0.6em',
+                overflow: 'hidden',
+                transition: 'all 0.3s',
+                lineHeight: '1.4em',
+                border: '2px solid #1BFD9C',
+                background: 'linear-gradient(to right, rgba(27, 253, 156, 0.1) 1%, transparent 40%, transparent 60%, rgba(27, 253, 156, 0.1) 100%)',
+                color: '#1BFD9C',
+                boxShadow: 'inset 0 0 10px rgba(27, 253, 156, 0.4), 0 0 9px 3px rgba(27, 253, 156, 0.1)',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#82ffc9'
+                e.currentTarget.style.boxShadow = 'inset 0 0 10px rgba(27, 253, 156, 0.6), 0 0 9px 3px rgba(27, 253, 156, 0.2)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#1BFD9C'
+                e.currentTarget.style.boxShadow = 'inset 0 0 10px rgba(27, 253, 156, 0.4), 0 0 9px 3px rgba(27, 253, 156, 0.1)'
+              }}
+            >
+              Volunteer
+            </button>
           ) : (
             <p className="no-volunteers" style={{ color: '#ff4d4d', fontWeight: 'bold', margin: '0.5rem 0' }}>No more volunteers</p>
           )}
