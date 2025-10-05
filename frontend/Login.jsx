@@ -6,6 +6,7 @@ const API_BASE = 'https://epass-backend.onrender.com'
 
 function Login() {
   const [isActive, setIsActive] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [signUpData, setSignUpData] = useState({
     name: '',
     usn: '',
@@ -21,11 +22,13 @@ function Login() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    console.log('Login component mounted')
     checkAuthStatus()
   }, [])
 
   const checkAuthStatus = async () => {
     try {
+      console.log('Checking auth status...')
       const response = await fetch(`${API_BASE}/api/me`, {
         method: 'GET',
         headers: {
@@ -38,10 +41,13 @@ function Login() {
         sessionStorage.setItem('userUSN', data.userUSN)
         sessionStorage.setItem('userName', data.userName)
         navigate('/events.html')
+      } else {
+        console.log('Not authenticated - showing login form')
+        setIsLoading(false)
       }
     } catch (error) {
-      console.log('User not authenticated - showing login form')
-      // This is normal - user just needs to log in
+      console.log('Auth check failed - showing login form', error)
+      setIsLoading(false)
     }
   }
 
@@ -63,7 +69,7 @@ function Login() {
       border-radius: 5px;
       color: white;
       font-weight: normal;
-      z-index: 1000;
+      z-index: 10000;
       animation: slideIn 0.3s ease-in-out;
       ${isError ? 'background-color:rgb(225, 108, 95);' : 'background-color:rgb(114, 221, 158);'}
     `
@@ -227,107 +233,127 @@ function Login() {
     }
   }
 
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        color: 'white',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    )
+  }
+
+  console.log('Rendering login form, isActive:', isActive)
+
   return (
-    <div className={`container ${isActive ? 'active' : ''}`} id="container">
-      <div className="form-container sign-up">
-        <form onSubmit={handleSignUp}>
-          <h1>Create Account</h1>
-
-          <input
-            type="text"
-            placeholder="Name"
-            value={signUpData.name}
-            onChange={(e) => setSignUpData({...signUpData, name: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="text"
-            placeholder="USN"
-            value={signUpData.usn}
-            onChange={(e) => setSignUpData({...signUpData, usn: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="number"
-            placeholder="Sem"
-            value={signUpData.sem}
-            onChange={(e) => setSignUpData({...signUpData, sem: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="number"
-            placeholder="Mobile No"
-            value={signUpData.mobno}
-            onChange={(e) => setSignUpData({...signUpData, mobno: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="text"
-            placeholder="email ID"
-            value={signUpData.email}
-            onChange={(e) => setSignUpData({...signUpData, email: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={signUpData.password}
-            onChange={(e) => setSignUpData({...signUpData, password: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <button type="submit">Sign Up</button>
-        </form>
-      </div>
-
-      <div className="form-container sign-in">
-        <form onSubmit={handleSignIn}>
-          <h1>Sign In</h1>
-          <div className="social-icons">
-            <a href="#" className="icon"><i className="fa-brands fa-google-plus-g"></i></a>
-            <a href="#" className="icon"><i className="fa-brands fa-facebook-f"></i></a>
-            <a href="#" className="icon"><i className="fa-brands fa-github"></i></a>
-            <a href="#" className="icon"><i className="fa-brands fa-linkedin-in"></i></a>
-          </div>
-          <input
-            type="text"
-            placeholder="USN"
-            id="usn"
-            value={signInData.usn}
-            onChange={(e) => setSignInData({...signInData, usn: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            id="password"
-            value={signInData.password}
-            onChange={(e) => setSignInData({...signInData, password: e.target.value})}
-            onKeyPress={handleKeyPress}
-          />
-          <a href="#">Forgot Your Password?</a>
-          <button type="submit">Sign In</button>
-        </form>
-      </div>
-
-      <div className="toggle-container">
-        <div className="toggle">
-          <div className="toggle-panel toggle-left">
-            <h1>Welcome Back!</h1>
-            <p>Enter your personal details to use all of site features</p>
-            <button className="hidden" id="login" type="button" onClick={() => setIsActive(false)}>Sign In</button>
-          </div>
-          <div className="toggle-panel toggle-right">
-            <h1>Hello, Friend!</h1>
-            <p>Register with your personal details to Create New Account</p>
-            <button className="hidden" id="register" type="button" onClick={() => setIsActive(true)}>Sign Up</button>
-          </div>
-        </div>
-      </div>
+    <>
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
       />
-    </div>
+      <div className={`container${isActive ? ' active' : ''}`} id="container">
+        <div className="form-container sign-up">
+          <form onSubmit={handleSignUp}>
+            <h1>Create Account</h1>
+
+            <input
+              type="text"
+              placeholder="Name"
+              value={signUpData.name}
+              onChange={(e) => setSignUpData({...signUpData, name: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <input
+              type="text"
+              placeholder="USN"
+              value={signUpData.usn}
+              onChange={(e) => setSignUpData({...signUpData, usn: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <input
+              type="number"
+              placeholder="Sem"
+              value={signUpData.sem}
+              onChange={(e) => setSignUpData({...signUpData, sem: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <input
+              type="number"
+              placeholder="Mobile No"
+              value={signUpData.mobno}
+              onChange={(e) => setSignUpData({...signUpData, mobno: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <input
+              type="text"
+              placeholder="email ID"
+              value={signUpData.email}
+              onChange={(e) => setSignUpData({...signUpData, email: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={signUpData.password}
+              onChange={(e) => setSignUpData({...signUpData, password: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <button type="submit">Sign Up</button>
+          </form>
+        </div>
+
+        <div className="form-container sign-in">
+          <form onSubmit={handleSignIn}>
+            <h1>Sign In</h1>
+            <div className="social-icons">
+              <a href="#" className="icon"><i className="fa-brands fa-google-plus-g"></i></a>
+              <a href="#" className="icon"><i className="fa-brands fa-facebook-f"></i></a>
+              <a href="#" className="icon"><i className="fa-brands fa-github"></i></a>
+              <a href="#" className="icon"><i className="fa-brands fa-linkedin-in"></i></a>
+            </div>
+            <input
+              type="text"
+              placeholder="USN"
+              id="usn"
+              value={signInData.usn}
+              onChange={(e) => setSignInData({...signInData, usn: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              id="password"
+              value={signInData.password}
+              onChange={(e) => setSignInData({...signInData, password: e.target.value})}
+              onKeyPress={handleKeyPress}
+            />
+            <a href="#">Forgot Your Password?</a>
+            <button type="submit">Sign In</button>
+          </form>
+        </div>
+
+        <div className="toggle-container">
+          <div className="toggle">
+            <div className="toggle-panel toggle-left">
+              <h1>Welcome Back!</h1>
+              <p>Enter your personal details to use all of site features</p>
+              <button className="hidden" id="login" type="button" onClick={() => setIsActive(false)}>Sign In</button>
+            </div>
+            <div className="toggle-panel toggle-right">
+              <h1>Hello, Friend!</h1>
+              <p>Register with your personal details to Create New Account</p>
+              <button className="hidden" id="register" type="button" onClick={() => setIsActive(true)}>Sign Up</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 
