@@ -7,9 +7,11 @@
   font-family: 'Roboto Slab', serif;
   min-height: 100vh;
   width: 100%;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  padding: 80px 20px 20px;
+  padding: 20px;
 }
 
 /* Reset box-sizing for all events page children */
@@ -68,7 +70,6 @@
   gap: 20px;
   max-width: 1020px;
   width: 100%;
-  margin: 0 auto;
   padding: 20px;
 }
 
