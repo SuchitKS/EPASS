@@ -1,29 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-/* Global resets - safe for all pages */
-* {
+/* ONLY scope styles to login-page to avoid conflicts */
+.login-page * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
 }
-
-html, body {
-    height: 100%;
-    width: 100%;
-}
-
-/* Background for all pages */
-body {
-    background: #00416A;
-    background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);  
-    background: linear-gradient(to right, #E4E5E6, #00416A);
-    margin: 0;
-    padding: 0;
-}
-
-/* Only apply these styles when Login component is rendered */
-/* We'll use a wrapper class to scope these styles */
 
 .login-page {
     display: flex;
@@ -297,14 +280,14 @@ body {
     background-color: rgb(225, 108, 95);
 }
 
-/* Remove number input arrows - global, safe */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+/* Remove number input arrows - ONLY for login page */
+.login-page input[type="number"]::-webkit-inner-spin-button,
+.login-page input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-input[type="number"] {
+.login-page input[type="number"] {
     -moz-appearance: textfield;
 }
 
