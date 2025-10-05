@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900');
 
-/* Only apply font to events page elements, not body globally */
+/* Events page wrapper - all layout contained here */
 .events-page {
+  box-sizing: border-box;
   font-family: 'Roboto Slab', serif;
   min-height: 100vh;
   width: 100%;
