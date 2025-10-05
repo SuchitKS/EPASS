@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './style.css'
 
@@ -19,10 +19,39 @@ function Login() {
     usn: '',
     password: ''
   })
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const suggestionRef = useRef(null)
   const navigate = useNavigate()
+
+  // Get stored USNs from localStorage
+  const getStoredUSNs = () => {
+    const stored = localStorage.getItem('usn_history')
+    return stored ? JSON.parse(stored) : []
+  }
+
+  // Save USN to localStorage
+  const saveUSN = (usn) => {
+    const history = getStoredUSNs()
+    if (!history.includes(usn)) {
+      const updated = [usn, ...history].slice(0, 5) // Keep last 5 USNs
+      localStorage.setItem('usn_history', JSON.stringify(updated))
+    }
+  }
 
   useEffect(() => {
     checkAuthStatus()
+  }, [])
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(event.target)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   const checkAuthStatus = async () => {
@@ -45,6 +74,37 @@ function Login() {
     } catch (error) {
       setIsLoading(false)
     }
+  }
+
+  const handleUSNInput = (value, isSignUp = false) => {
+    const upperValue = value.toUpperCase()
+    
+    if (isSignUp) {
+      setSignUpData({...signUpData, usn: upperValue})
+    } else {
+      setSignInData({...signInData, usn: upperValue})
+    }
+
+    // Filter suggestions
+    if (upperValue.length >= 3) {
+      const history = getStoredUSNs()
+      const filtered = history.filter(usn => 
+        usn.toUpperCase().startsWith(upperValue)
+      )
+      setFilteredSuggestions(filtered)
+      setShowSuggestions(filtered.length > 0)
+    } else {
+      setShowSuggestions(false)
+    }
+  }
+
+  const selectSuggestion = (usn, isSignUp = false) => {
+    if (isSignUp) {
+      setSignUpData({...signUpData, usn})
+    } else {
+      setSignInData({...signInData, usn})
+    }
+    setShowSuggestions(false)
   }
 
   const showMessage = (text, isError = false) => {
@@ -123,6 +183,7 @@ function Login() {
         showMessage(`Welcome back, ${data.userName}!`)
         sessionStorage.setItem('userUSN', data.userUSN)
         sessionStorage.setItem('userName', data.userName)
+        saveUSN(usn) // Save USN to history
 
         setTimeout(() => {
           navigate('/events.html')
@@ -197,6 +258,7 @@ function Login() {
         showMessage(`Account created successfully! Welcome, ${data.userName}!`)
         sessionStorage.setItem('userUSN', data.userUSN)
         sessionStorage.setItem('userName', data.userName)
+        saveUSN(trimmedUsn) // Save USN to history
 
         setSignUpData({
           name: '',
@@ -239,12 +301,40 @@ function Login() {
               value={signUpData.name}
               onChange={(e) => setSignUpData({...signUpData, name: e.target.value})}
             />
-            <input
-              type="text"
-              placeholder="USN"
-              value={signUpData.usn}
-              onChange={(e) => setSignUpData({...signUpData, usn: e.target.value})}
-            />
+            <div className="usn-input-wrapper" ref={suggestionRef}>
+              <input
+                type="text"
+                placeholder="USN"
+                value={signUpData.usn}
+                onChange={(e) => handleUSNInput(e.target.value, true)}
+                onFocus={() => {
+                  if (signUpData.usn.length >= 3) {
+                    const history = getStoredUSNs()
+                    const filtered = history.filter(usn => 
+                      usn.toUpperCase().startsWith(signUpData.usn.toUpperCase())
+                    )
+                    if (filtered.length > 0) {
+                      setFilteredSuggestions(filtered)
+                      setShowSuggestions(true)
+                    }
+                  }
+                }}
+                autoComplete="off"
+              />
+              {showSuggestions && !isActive && filteredSuggestions.length > 0 && (
+                <div className="usn-suggestions">
+                  {filteredSuggestions.map((usn, index) => (
+                    <div
+                      key={index}
+                      className="usn-suggestion-item"
+                      onClick={() => selectSuggestion(usn, true)}
+                    >
+                      {usn}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <input
               type="number"
               placeholder="Sem"
@@ -282,19 +372,46 @@ function Login() {
               <a href="#" className="icon"><i className="fa-brands fa-linkedin-in"></i></a>
             </div>
             <span>or use your email password</span>
-            <input
-              type="text"
-              placeholder="USN"
-              value={signInData.usn}
-              onChange={(e) => setSignInData({...signInData, usn: e.target.value})}
-              autoComplete="off"
-              name="usn"
-            />
+            <div className="usn-input-wrapper" ref={suggestionRef}>
+              <input
+                type="text"
+                placeholder="USN"
+                value={signInData.usn}
+                onChange={(e) => handleUSNInput(e.target.value, false)}
+                onFocus={() => {
+                  if (signInData.usn.length >= 3) {
+                    const history = getStoredUSNs()
+                    const filtered = history.filter(usn => 
+                      usn.toUpperCase().startsWith(signInData.usn.toUpperCase())
+                    )
+                    if (filtered.length > 0) {
+                      setFilteredSuggestions(filtered)
+                      setShowSuggestions(true)
+                    }
+                  }
+                }}
+                autoComplete="off"
+              />
+              {showSuggestions && isActive === false && filteredSuggestions.length > 0 && (
+                <div className="usn-suggestions">
+                  {filteredSuggestions.map((usn, index) => (
+                    <div
+                      key={index}
+                      className="usn-suggestion-item"
+                      onClick={() => selectSuggestion(usn, false)}
+                    >
+                      {usn}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <input
               type="password"
               placeholder="Password"
               value={signInData.password}
               onChange={(e) => setSignInData({...signInData, password: e.target.value})}
+              autoComplete="off"
             />
             <a href="#">Forget Your Password?</a>
             <button type="button" onClick={handleSignIn}>Sign In</button>
