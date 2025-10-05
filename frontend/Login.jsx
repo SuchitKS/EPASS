@@ -287,6 +287,8 @@ function Login() {
               placeholder="USN"
               value={signInData.usn}
               onChange={(e) => setSignInData({...signInData, usn: e.target.value})}
+              autoComplete="off"
+              name="usn"
             />
             <input
               type="password"
