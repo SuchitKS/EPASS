@@ -254,7 +254,7 @@ function Volunteers() {
             </div>
           </div>
           <div className="button-container">
-            <button id="volunteerOtherEvent" onClick={() => navigate('/volunteer_events.html')}>
+            <button id="volunteerOtherEvent" onClick={() => navigate('/volunteer_events')}>
               Volunteer in Other Event
             </button>
           </div>
@@ -267,3 +267,4 @@ function Volunteers() {
 }
 
 export default Volunteers
+
