@@ -91,9 +91,9 @@ function Events() {
 
         <article className="card card--3">
           <div className="card__img"></div>
-          <a href="/volunteers" className="card_link">
+          <Link to="/volunteers" className="card_link">
             <div className="card__img--hover"></div>
-          </a>
+          <Link>
           <div className="card__info">
             <h3 className="card__title">Events volunteered by you</h3>
             <div className="card__icon">
@@ -110,6 +110,7 @@ function Events() {
 }
 
 export default Events
+
 
 
 
