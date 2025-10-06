@@ -93,7 +93,7 @@ function Events() {
           <div className="card__img"></div>
           <Link to="/volunteers" className="card_link">
             <div className="card__img--hover"></div>
-          <Link>
+          </Link>
           <div className="card__info">
             <h3 className="card__title">Events volunteered by you</h3>
             <div className="card__icon">
@@ -110,6 +110,7 @@ function Events() {
 }
 
 export default Events
+
 
 
 
