@@ -64,7 +64,7 @@ function Events() {
       <section className="cards">
         <article className="card card--1">
           <div className="card__img"></div>
-          <a href="/participants.html" className="card_link">
+          <a href="/participants" className="card_link">
             <div className="card__img--hover"></div>
           </a>
           <div className="card__info">
@@ -77,7 +77,7 @@ function Events() {
 
         <article className="card card--2">
           <div className="card__img"></div>
-          <a href="/organisers.html" className="card_link">
+          <a href="/organisers" className="card_link">
             <div className="card__img--hover"></div>
           </a>
           <div className="card__info">
@@ -90,7 +90,7 @@ function Events() {
 
         <article className="card card--3">
           <div className="card__img"></div>
-          <a href="/volunteers.html" className="card_link">
+          <a href="/volunteers" className="card_link">
             <div className="card__img--hover"></div>
           </a>
           <div className="card__info">
@@ -109,3 +109,4 @@ function Events() {
 }
 
 export default Events
+
