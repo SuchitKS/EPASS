@@ -54,97 +54,55 @@ function Events() {
   return (
     <>
       <div className="events-page">
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          left: '20px',
-          zIndex: 1000
-        }}>
-          <button 
-            id="logoutBtn" 
-            style={{
-              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-              color: 'white',
-              border: '2px solid rgba(255, 255, 255, 0.3)',
-              padding: '13px 26px',
-              borderRadius: '30px',
-              fontFamily: "'Roboto Slab', serif",
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              boxShadow: '0 8px 25px rgba(245, 87, 108, 0.4), 0 0 15px rgba(240, 147, 251, 0.2)',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              textDecoration: 'none',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)'
-              e.currentTarget.style.boxShadow = '0 12px 35px rgba(245, 87, 108, 0.5), 0 0 25px rgba(240, 147, 251, 0.3)'
-              e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)'
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(245, 87, 108, 0.4), 0 0 15px rgba(240, 147, 251, 0.2)'
-              e.currentTarget.style.transform = 'translateY(0) scale(1)'
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
-            }}
-            onMouseDown={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 3px 10px rgba(0, 0, 0, 0.2)'
-            }}
-          >
-            <i className="fas fa-sign-out-alt"></i>
-            Logout
-          </button>
-        </div>
+        <div className="logout-container">
+        <button id="logoutBtn" className="logout-btn">
+          <i className="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
+      </div>
 
-        <section className="cards">
-          <article className="card card--1">
-            <div className="card__img"></div>
-            <a href="/participants.html" className="card_link">
-              <div className="card__img--hover"></div>
-            </a>
-            <div className="card__info">
-              <h3 className="card__title">Events participated by you</h3>
-              <div className="card__icon">
-                <i className="fa-solid fa-plus"></i>
-              </div>
+      <section className="cards">
+        <article className="card card--1">
+          <div className="card__img"></div>
+          <a href="/participants.html" className="card_link">
+            <div className="card__img--hover"></div>
+          </a>
+          <div className="card__info">
+            <h3 className="card__title">Events participated by you</h3>
+            <div className="card__icon">
+              <i className="fa-solid fa-plus"></i>
             </div>
-          </article>
+          </div>
+        </article>
 
-          <article className="card card--2">
-            <div className="card__img"></div>
-            <a href="/organisers.html" className="card_link">
-              <div className="card__img--hover"></div>
-            </a>
-            <div className="card__info">
-              <h3 className="card__title">Events organised by you</h3>
-              <div className="card__icon">
-                <i className="fa-solid fa-plus"></i>
-              </div>
+        <article className="card card--2">
+          <div className="card__img"></div>
+          <a href="/organisers.html" className="card_link">
+            <div className="card__img--hover"></div>
+          </a>
+          <div className="card__info">
+            <h3 className="card__title">Events organised by you</h3>
+            <div className="card__icon">
+              <i className="fa-solid fa-plus"></i>
             </div>
-          </article>
+          </div>
+        </article>
 
-          <article className="card card--3">
-            <div className="card__img"></div>
-            <a href="/volunteers.html" className="card_link">
-              <div className="card__img--hover"></div>
-            </a>
-            <div className="card__info">
-              <h3 className="card__title">Events volunteered by you</h3>
-              <div className="card__icon">
-                <i className="fa-solid fa-plus"></i>
-              </div>
+        <article className="card card--3">
+          <div className="card__img"></div>
+          <a href="/volunteers.html" className="card_link">
+            <div className="card__img--hover"></div>
+          </a>
+          <div className="card__info">
+            <h3 className="card__title">Events volunteered by you</h3>
+            <div className="card__icon">
+              <i className="fa-solid fa-plus"></i>
             </div>
-          </article>
-        </section>
-        
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+          </div>
+        </article>
+      </section>
+      
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       </div>
     </>
   )
