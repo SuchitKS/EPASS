@@ -206,7 +206,7 @@ function Organisers() {
   return (
     <div>
       <div className="nav-container">
-        <button className="nav-btn back-btn" onClick={() => navigate('/events.html')}>
+        <button className="nav-btn back-btn" onClick={() => navigate('/events')}>
           <i className="fas fa-arrow-left"></i>
           Back
         </button>
@@ -248,7 +248,7 @@ function Organisers() {
             </div>
           </div>
           <div className="button-container">
-            <button onClick={() => navigate('/event_form.html')}>Organise New Event</button>
+            <button onClick={() => navigate('/event_form')}>Organise New Event</button>
           </div>
         </div>
       </section>
@@ -259,3 +259,4 @@ function Organisers() {
 }
 
 export default Organisers
+
