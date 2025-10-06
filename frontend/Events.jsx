@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import './events.css'
 
 const API_BASE = 'https://epass-backend.onrender.com'
@@ -64,9 +65,9 @@ function Events() {
       <section className="cards">
         <article className="card card--1">
           <div className="card__img"></div>
-          <a href="/participants" className="card_link">
+          <Link to="/participants" className="card_link">
             <div className="card__img--hover"></div>
-          </a>
+          </Link>
           <div className="card__info">
             <h3 className="card__title">Events participated by you</h3>
             <div className="card__icon">
@@ -77,9 +78,9 @@ function Events() {
 
         <article className="card card--2">
           <div className="card__img"></div>
-          <a href="/organisers" className="card_link">
+          <Link to="/organisers" className="card_link">
             <div className="card__img--hover"></div>
-          </a>
+          </Link>
           <div className="card__info">
             <h3 className="card__title">Events organised by you</h3>
             <div className="card__icon">
@@ -109,6 +110,7 @@ function Events() {
 }
 
 export default Events
+
 
 
 
