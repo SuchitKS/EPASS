@@ -267,7 +267,7 @@ function Participants() {
             </div>
           </div>
           <div className="button-container">
-            <button onClick={() => navigate('/registerevent.html')}>Participate in other Event</button>
+            <button onClick={() => navigate('/registerevent')}>Participate in other Event</button>
           </div>
         </div>
       </section>
@@ -278,3 +278,4 @@ function Participants() {
 }
 
 export default Participants
+
