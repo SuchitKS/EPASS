@@ -1,0 +1,62 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head>   
+  <meta charset="UTF-8" />   
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />   
+  <link rel="stylesheet" href="organisers.css" />   
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" /> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />  
+  <title>My Organized Events</title> 
+</head> 
+<body> 
+  <!-- Navigation Buttons -->
+  <div class="nav-container">
+    <button id="backBtn" class="nav-btn back-btn">
+      <i class="fas fa-arrow-left"></i>
+      Back
+    </button>
+    <button id="logoutBtn" class="nav-btn logout-btn">
+      <i class="fas fa-sign-out-alt"></i>
+      Logout
+    </button>
+  </div>
+
+  <section class="hero-section">     
+    <div class="container">
+      <div class="card-grid">       
+        <div class="card" id="ongoing-card">         
+          <div class="card__background"></div>         
+          <div class="card__content">           
+            <h3 class="card__heading">Ongoing Events</h3>           
+            <div class="card__details">
+              <!-- Event details will be dynamically inserted here -->
+            </div>         
+          </div>       
+        </div>        
+        <div class="card" id="completed-card">         
+          <div class="card__background"></div>         
+          <div class="card__content">           
+            <h3 class="card__heading">Completed Events</h3>           
+            <div class="card__details">
+              <!-- Event details will be dynamically inserted here -->
+            </div>         
+          </div>       
+        </div>        
+        <div class="card" id="upcoming-card">         
+          <div class="card__background"></div>         
+          <div class="card__content">           
+            <h3 class="card__heading">Upcoming Events</h3>           
+            <div class="card__details">
+              <!-- Event details will be dynamically inserted here -->
+            </div>         
+          </div>       
+        </div>     
+      </div>
+      <div class="button-container">
+        <button>Organise New Event</button>
+      </div>
+    </div>   
+  </section>        
+  <script src="organisers.js"></script> 
+</body> 
+</html>
