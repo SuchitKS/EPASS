@@ -13,15 +13,16 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/events.html" element={<Events />} />
-      <Route path="/event_form.html" element={<EventForm />} />
-      <Route path="/organisers.html" element={<Organisers />} />
-      <Route path="/participants.html" element={<Participants />} />
-      <Route path="/volunteers.html" element={<Volunteers />} />
-      <Route path="/registerevent.html" element={<RegisterEvent />} />
-      <Route path="/volunteer_events.html" element={<VolunteerEvents />} />
+      <Route path="/events" element={<Events />} />
+      <Route path="/event_form" element={<EventForm />} />
+      <Route path="/organisers" element={<Organisers />} />
+      <Route path="/participants" element={<Participants />} />
+      <Route path="/volunteers" element={<Volunteers />} />
+      <Route path="/registerevent" element={<RegisterEvent />} />
+      <Route path="/volunteer_events" element={<VolunteerEvents />} />
     </Routes>
   )
 }
 
 export default App
+
