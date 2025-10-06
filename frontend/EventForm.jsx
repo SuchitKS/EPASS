@@ -130,7 +130,7 @@ function EventForm() {
           registrationFee: ''
         })
         setTimeout(() => {
-          navigate('/organisers.html')
+          navigate('/organisers')
         }, 2000)
       } else {
         if (res.status === 401) {
@@ -315,3 +315,4 @@ function EventForm() {
 }
 
 export default EventForm
+
