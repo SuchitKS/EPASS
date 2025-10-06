@@ -137,10 +137,10 @@ function RegisterEvent() {
   }
 
   const getButtonClass = (filter) => {
-    const baseClass = 'flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 text-sm font-medium leading-normal'
+    const baseClass = 'flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-6 text-sm font-semibold leading-normal transition-all duration-300 transform hover:scale-105'
     return filter === currentFilter
-      ? `${baseClass} bg-[#00416A] text-white`
-      : `${baseClass} bg-[#f1f2f4] text-[#121416] hover:bg-[#e1e2e4] transition-all`
+      ? `${baseClass} bg-gradient-to-r from-[#00416A] to-[#0077BE] text-white shadow-lg hover:shadow-xl`
+      : `${baseClass} bg-white text-[#121416] hover:bg-gradient-to-r hover:from-[#f8f9fa] hover:to-[#e9ecef] border-2 border-gray-200 hover:border-[#00416A] shadow-md hover:shadow-lg`
   }
 
   const renderEventCard = (event) => {
@@ -163,61 +163,61 @@ function RegisterEvent() {
     const feeText = regFee > 0 ? `₹${regFee}` : 'Free'
 
     return (
-      <div key={event.eid} className="bg-white border border-[#dde1e3] rounded-xl shadow-sm hover:shadow-md transition-shadow">
-        <div className="flex flex-wrap justify-between gap-3 p-4">
+      <div key={event.eid} className="bg-white border border-[#dde1e3] rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+        <div className="flex flex-wrap justify-between gap-3 p-6 bg-gradient-to-r from-[#f8f9fa] to-[#ffffff]">
           <div className="flex min-w-72 flex-col gap-3">
             <div className="flex items-center gap-3">
               <p className="text-[#121416] tracking-light text-[24px] font-bold leading-tight">{event.ename}</p>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[event.status]} capitalize`}>
+              <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${statusColors[event.status]} capitalize shadow-md`}>
                 {event.status}
               </span>
             </div>
-            <p className="text-[#6a7681] text-sm font-normal leading-normal">{event.eventdesc || 'No description available'}</p>
+            <p className="text-[#6a7681] text-sm font-semibold leading-normal">{event.eventdesc || 'No description available'}</p>
           </div>
           {event.status === 'upcoming' && (
             <button
               onClick={() => registerForEvent(event.eid)}
-              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#00416A] text-white text-sm font-medium leading-normal hover:bg-opacity-90 transition-all"
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-6 bg-gradient-to-r from-[#00416A] to-[#0077BE] text-white text-sm font-bold leading-normal hover:from-[#0077BE] hover:to-[#00416A] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               <span className="truncate">Register</span>
             </button>
           )}
         </div>
 
-        <h3 className="text-[#121416] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Event Details</h3>
-        <div className="p-4 grid grid-cols-[20%_1fr] gap-x-6">
-          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
-            <p className="text-[#6a7681] text-sm font-normal leading-normal">Date & Time</p>
+        <h3 className="text-[#121416] text-xl font-bold leading-tight tracking-[-0.015em] px-6 pb-3 pt-5 border-t-2 border-gray-100">Event Details</h3>
+        <div className="px-6 pb-4 grid grid-cols-[20%_1fr] gap-x-6">
+          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#e9ecef] py-5 hover:bg-[#f8f9fa] transition-colors duration-200 rounded-lg px-3 -mx-3">
+            <p className="text-[#6a7681] text-sm font-semibold leading-normal">Date & Time</p>
             <p className="text-[#121416] text-sm font-normal leading-normal">{formattedDate}, {timeFormatted}</p>
           </div>
-          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
-            <p className="text-[#6a7681] text-sm font-normal leading-normal">Location</p>
+          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#e9ecef] py-5 hover:bg-[#f8f9fa] transition-colors duration-200 rounded-lg px-3 -mx-3">
+            <p className="text-[#6a7681] text-sm font-semibold leading-normal">Location</p>
             <p className="text-[#121416] text-sm font-normal leading-normal">{event.eventLoc || 'Location TBA'}</p>
           </div>
-          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
-            <p className="text-[#6a7681] text-sm font-normal leading-normal">Organizer</p>
+          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#e9ecef] py-5 hover:bg-[#f8f9fa] transition-colors duration-200 rounded-lg px-3 -mx-3">
+            <p className="text-[#6a7681] text-sm font-semibold leading-normal">Organizer</p>
             <p className="text-[#121416] text-sm font-normal leading-normal">{event.organizerName || event.clubName || 'Event Organizer'}</p>
           </div>
-          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
-            <p className="text-[#6a7681] text-sm font-normal leading-normal">Registration Fee</p>
+          <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#e9ecef] py-5 hover:bg-[#f8f9fa] transition-colors duration-200 rounded-lg px-3 -mx-3">
+            <p className="text-[#6a7681] text-sm font-semibold leading-normal">Registration Fee</p>
             <p className="text-[#121416] text-sm font-normal leading-normal">{feeText}</p>
           </div>
           {event.maxPart && (
-            <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
-              <p className="text-[#6a7681] text-sm font-normal leading-normal">Max Participants</p>
+            <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#e9ecef] py-5 hover:bg-[#f8f9fa] transition-colors duration-200 rounded-lg px-3 -mx-3">
+              <p className="text-[#6a7681] text-sm font-semibold leading-normal">Max Participants</p>
               <p className="text-[#121416] text-sm font-normal leading-normal">{event.maxPart}</p>
             </div>
           )}
           {event.maxVoln && (
-            <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#dde1e3] py-5">
-              <p className="text-[#6a7681] text-sm font-normal leading-normal">Max Volunteers</p>
+            <div className="col-span-2 grid grid-cols-subgrid border-t border-t-[#e9ecef] py-5 hover:bg-[#f8f9fa] transition-colors duration-200 rounded-lg px-3 -mx-3">
+              <p className="text-[#6a7681] text-sm font-semibold leading-normal">Max Volunteers</p>
               <p className="text-[#121416] text-sm font-normal leading-normal">{event.maxVoln}</p>
             </div>
           )}
         </div>
 
-        <h3 className="text-[#121416] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">About the Event</h3>
-        <div className="text-[#121416] text-base font-normal leading-normal pb-3 pt-1 px-4">
+        <h3 className="text-[#121416] text-xl font-bold leading-tight tracking-[-0.015em] px-6 pb-3 pt-5 border-t-2 border-gray-100">About the Event</h3>
+        <div className="text-[#121416] text-base font-normal leading-relaxed pb-6 pt-1 px-6">
           {event.eventdesc || 'Join us for this exciting event! More details will be available soon. Don\'t miss this opportunity to be part of something special.'}
         </div>
       </div>
@@ -237,13 +237,13 @@ function RegisterEvent() {
     >
       <div className="layout-container flex h-full grow flex-col w-full">
         <div className="px-40 flex flex-1 justify-center py-5 w-full">
-          <div className="layout-content-container flex flex-col max-w-[960px] flex-1 bg-white rounded-xl p-6 shadow-lg">
-            <div className="flex flex-wrap justify-between gap-3 p-4">
+          <div className="layout-content-container flex flex-col max-w-[960px] flex-1 bg-white rounded-2xl p-8 shadow-2xl border border-gray-100">
+            <div className="flex flex-wrap justify-between gap-4 p-6 bg-gradient-to-r from-[#f8f9fa] to-[#ffffff] rounded-xl mb-6 shadow-md">
               <div className="flex min-w-72 flex-col gap-3">
-                <h1 className="text-[#121416] tracking-light text-[32px] font-bold leading-tight">All Events</h1>
-                <p className="text-[#6a7681] text-sm font-normal leading-normal">Discover and join events happening around you</p>
+                <h1 className="text-[#121416] tracking-light text-[36px] font-extrabold leading-tight bg-gradient-to-r from-[#00416A] to-[#0077BE] bg-clip-text text-transparent">All Events</h1>
+                <p className="text-[#6a7681] text-sm font-semibold leading-normal">Discover and join events happening around you</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button onClick={() => filterEvents('all')} className={getButtonClass('all')}>All</button>
                 <button onClick={() => filterEvents('upcoming')} className={getButtonClass('upcoming')}>Upcoming</button>
                 <button onClick={() => filterEvents('ongoing')} className={getButtonClass('ongoing')}>Ongoing</button>
@@ -263,7 +263,7 @@ function RegisterEvent() {
                 <p className="text-red-500 font-medium">Failed to load events</p>
                 <button
                   onClick={loadAllEvents}
-                  className="mt-2 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#00416A] text-white text-sm font-medium leading-normal hover:bg-opacity-90 mx-auto"
+                  className="mt-2 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-6 bg-gradient-to-r from-[#00416A] to-[#0077BE] text-white text-sm font-bold leading-normal hover:from-[#0077BE] hover:to-[#00416A] mx-auto transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   Try Again
                 </button>
@@ -285,7 +285,7 @@ function RegisterEvent() {
             <div className="px-4 py-4">
               <button
                 onClick={() => window.history.back()}
-                className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#f1f2f4] text-[#121416] text-sm font-medium leading-normal hover:bg-[#e1e2e4] transition-all"
+                className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-6 bg-gradient-to-r from-[#f1f2f4] to-[#e9ecef] text-[#121416] text-sm font-semibold leading-normal hover:from-[#e9ecef] hover:to-[#f1f2f4] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg border-2 border-gray-300 hover:border-[#00416A]"
               >
                 ← Back to Dashboard
               </button>
