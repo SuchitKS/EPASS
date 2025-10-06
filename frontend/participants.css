@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900');
 
-:root {
+/* Scoped to participants page only */
+.participants-page {
   --background-dark: #2d3548;
   --text-light: rgba(255,255,255,0.6);
   --text-lighter: rgba(255,255,255,0.9);
@@ -12,42 +13,34 @@
   --spacing-xxl: 64px;
   --width-container: 1200px;
   --primary-color: #1a73e8;
-}
-
-* {
-  border: 0;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  height: 100%;
+  
+  min-height: 100vh;
+  width: 100%;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
 }
 
-body {
-  height: 100%;
+.participants-page * {
+  box-sizing: border-box;
 }
 
-.hero-section {
+.participants-page .hero-section {
   align-items: flex-start;
   background: linear-gradient(to right, #E4E5E6, #00416A);
   display: flex;
-  min-height: 100%;
+  min-height: 100vh;
   justify-content: center;
   padding: var(--spacing-xxl) var(--spacing-l);
 }
 
-.container {
+.participants-page .container {
   display: flex;
   flex-direction: column;
   max-width: var(--width-container);
   width: 100%;
 }
 
-.card-grid {
+.participants-page .card-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   grid-column-gap: var(--spacing-l);
@@ -56,32 +49,32 @@ body {
 }
 
 @media(min-width: 540px) {
-  .card-grid {
+  .participants-page .card-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media(min-width: 960px) {
-  .card-grid {
+  .participants-page .card-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.card {
+.participants-page .card {
   list-style: none;
   position: relative;
   cursor: pointer;
   transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-.card:before {
+.participants-page .card:before {
   content: '';
   display: block;
   padding-bottom: 150%;
   width: 100%;
 }
 
-.card__background {
+.participants-page .card__background {
   border-radius: var(--spacing-l);
   bottom: 0;
   left: 0;
@@ -101,18 +94,18 @@ body {
   filter: brightness(0.75) saturate(1.2) contrast(0.85);
 }
 
-.card:hover {
+.participants-page .card:hover {
   z-index: 10;
   transform: scale(1.05);
   transition: transform 0.3s ease;
 }
 
-.card-grid:hover > .card:not(:hover) {
+.participants-page .card-grid:hover > .card:not(:hover) {
   filter: brightness(0.5) saturate(0) contrast(1.2) blur(4px);
   transition: filter 0.3s ease;
 }
 
-.card__content {
+.participants-page .card__content {
   left: 0;
   padding: var(--spacing-l);
   position: absolute;
@@ -121,7 +114,7 @@ body {
   color: white;
 }
 
-.card__heading {
+.participants-page .card__heading {
   color: var(--text-lighter);
   font-size: 1.9rem;
   text-shadow: 2px 2px 20px rgba(0,0,0,0.2);
@@ -130,7 +123,7 @@ body {
 }
 
 /* Modified for vertical scroll */
-.card__details {
+.participants-page .card__details {
   margin-top: var(--spacing-m);
   background: rgba(0, 0, 0, 0.6);
   padding: var(--spacing-s);
@@ -143,7 +136,7 @@ body {
 }
 
 /* Event items vertical layout with flex for button positioning */
-.event-item {
+.participants-page .event-item {
   padding: 15px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -154,19 +147,24 @@ body {
   gap: 15px;
 }
 
-.event-info {
+.participants-page .event-info {
   flex: 1;
-  min-width: 0; /* Allow text to wrap */
+  min-width: 0;
 }
 
-.event-actions {
+.participants-page .event-info p {
+  margin: 5px 0;
+  color: white;
+}
+
+.participants-page .event-actions {
   flex-shrink: 0;
   display: flex;
   align-items: center;
 }
 
 /* Event button styles */
-.event-btn {
+.participants-page .event-btn {
   padding: 8px 12px;
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -182,42 +180,42 @@ body {
   white-space: nowrap;
 }
 
-.event-btn:hover {
+.participants-page .event-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.event-btn:active {
+.participants-page .event-btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Scrollbar for vertical scroll */
-.card__details::-webkit-scrollbar {
+.participants-page .card__details::-webkit-scrollbar {
   width: 6px;
 }
 
-.card__details::-webkit-scrollbar-track {
+.participants-page .card__details::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.card__details::-webkit-scrollbar-thumb {
+.participants-page .card__details::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.5);
   border-radius: 3px;
 }
 
 /* Button Container */
-.button-container {
+.participants-page .button-container {
   display: flex;
   justify-content: center;
   margin-top: var(--spacing-xl);
   width: 100%;
 }
 
-/* Main button styles from Uiverse.io by mrhyddenn */
-.button-container button {
+/* Main button styles */
+.participants-page .button-container button {
   position: relative;
   padding: 10px 20px;
   border-radius: 7px;
@@ -231,19 +229,20 @@ body {
   overflow: hidden;
   box-shadow: 0 0 0 0 transparent;
   transition: all 0.2s ease-in;
+  cursor: pointer;
 }
 
-.button-container button:hover {
+.participants-page .button-container button:hover {
   background: rgb(61, 106, 255);
   box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
   transition: all 0.2s ease-out;
 }
 
-.button-container button:hover::before {
+.participants-page .button-container button:hover::before {
   animation: sh02 0.5s 0s linear;
 }
 
-.button-container button::before {
+.participants-page .button-container button::before {
   content: '';
   display: block;
   width: 0px;
@@ -271,20 +270,20 @@ body {
   }
 }
 
-.button-container button:active {
+.participants-page .button-container button:active {
   box-shadow: 0 0 0 0 transparent;
   transition: box-shadow 0.2s ease-in;
 }
 
 /* Logout Button Styles */
-.logout-container {
+.participants-page .logout-container {
   position: fixed;
   top: 20px;
   left: 20px;
   z-index: 1000;
 }
 
-.logout-btn {
+.participants-page .logout-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -302,48 +301,48 @@ body {
   text-decoration: none;
 }
 
-.logout-btn:hover {
+.participants-page .logout-btn:hover {
   background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
 
-.logout-btn:active {
+.participants-page .logout-btn:active {
   transform: translateY(0);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
-.logout-btn i {
+.participants-page .logout-btn i {
   font-size: 16px;
 }
 
 /* Responsive adjustments for smaller screens */
 @media(max-width: 540px) {
-  .event-item {
+  .participants-page .event-item {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .event-actions {
+  .participants-page .event-actions {
     margin-top: 10px;
     justify-content: flex-end;
   }
   
-  .event-btn {
+  .participants-page .event-btn {
     align-self: flex-end;
   }
 
-  .logout-container {
+  .participants-page .logout-container {
     top: 15px;
     left: 15px;
   }
   
-  .logout-btn {
+  .participants-page .logout-btn {
     padding: 10px 16px;
     font-size: 13px;
   }
   
-  .logout-btn i {
+  .participants-page .logout-btn i {
     font-size: 14px;
   }
 }
