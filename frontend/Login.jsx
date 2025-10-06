@@ -67,7 +67,7 @@ function Login() {
         const data = await response.json()
         sessionStorage.setItem('userUSN', data.userUSN)
         sessionStorage.setItem('userName', data.userName)
-        navigate('/events.html')
+        navigate('/events')
       } else {
         setIsLoading(false)
       }
@@ -186,7 +186,7 @@ function Login() {
         saveUSN(usn) // Save USN to history
 
         setTimeout(() => {
-          navigate('/events.html')
+          navigate('/events')
         }, 1500)
       } else {
         showMessage(data.error, true)
@@ -270,7 +270,7 @@ function Login() {
         })
 
         setTimeout(() => {
-          navigate('/events.html')
+          navigate('/events')
         }, 2000)
       } else {
         showMessage(data.error, true)
@@ -437,3 +437,4 @@ function Login() {
 }
 
 export default Login
+
