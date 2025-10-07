@@ -21,17 +21,8 @@
   box-sizing: border-box;
 }
 
-/* CRITICAL FIX: Ensure html, body, and root have full height */
-html,
-body,
-#root {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 html {
+  height: 100%;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
 }
@@ -40,12 +31,11 @@ body {
   height: 100%;
 }
 
-/* CRITICAL FIX: Make hero-section take full viewport */
 .hero-section {
   align-items: flex-start;
   background: linear-gradient(to right, #E4E5E6, #00416A);
   display: flex;
-  min-height: 100vh; /* Changed from 100% to 100vh */
+  min-height: 100%;
   justify-content: center;
   padding: var(--spacing-xxl) var(--spacing-l);
 }
@@ -164,23 +154,9 @@ body {
   gap: 15px;
 }
 
-.event-item:last-child {
-  margin-bottom: 0;
-}
-
 .event-info {
   flex: 1;
   min-width: 0; /* Allow text to wrap */
-}
-
-.event-info p {
-  margin-bottom: 4px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 13px;
-}
-
-.event-info p:last-child {
-  margin-bottom: 0;
 }
 
 .event-actions {
@@ -232,10 +208,6 @@ body {
   border-radius: 3px;
 }
 
-.card__details::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.7);
-}
-
 /* Button Container */
 .button-container {
   display: flex;
@@ -259,7 +231,6 @@ body {
   overflow: hidden;
   box-shadow: 0 0 0 0 transparent;
   transition: all 0.2s ease-in;
-  cursor: pointer;
 }
 
 .button-container button:hover {
@@ -376,3 +347,4 @@ body {
     font-size: 14px;
   }
 }
+
