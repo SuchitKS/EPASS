@@ -22,16 +22,8 @@
 }
 
 /* CRITICAL FIX: Ensure html, body, and root have full height */
-html,
-body,
-#root {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 html {
+  height: 100%;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
 }
@@ -40,12 +32,11 @@ body {
   height: 100%;
 }
 
-/* CRITICAL FIX: Make hero-section take full viewport */
 .hero-section {
   align-items: flex-start;
   background: linear-gradient(to right, #E4E5E6, #00416A);
   display: flex;
-  min-height: 100vh; /* Changed from 100% to 100vh */
+  min-height: 100%;
   justify-content: center;
   padding: var(--spacing-xxl) var(--spacing-l);
 }
@@ -82,10 +73,7 @@ body {
   position: relative;
   cursor: pointer;
   transition: transform 0.3s ease, filter 0.3s ease;
-  background: transparent;
-  border-radius: var(--spacing-l);
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card:before {
@@ -102,10 +90,6 @@ body {
   position: absolute;
   right: 0;
   top: 0;
-  background-size: cover;
-  background-position: center;
-  transform: scale(1);
-  transition: transform 0.3s ease;
   transform-origin: center;
   transform: scale(1) translateZ(0);
   transition:
