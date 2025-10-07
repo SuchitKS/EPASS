@@ -50,21 +50,26 @@ body {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  grid-column-gap: var(--spacing-l);
-  grid-row-gap: var(--spacing-l);
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: var(--spacing-xl);
+  grid-row-gap: var(--spacing-xl);
   width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-l);
 }
 
-@media(min-width: 540px) {
+@media(max-width: 1200px) {
   .card-grid {
     grid-template-columns: repeat(2, 1fr);
+    max-width: 900px;
   }
 }
 
-@media(min-width: 960px) {
+@media(max-width: 768px) {
   .card-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
+    max-width: 500px;
   }
 }
 
@@ -151,25 +156,31 @@ body {
 .card__details {
   margin-top: var(--spacing-m);
   background: rgba(0, 0, 0, 0.6);
-  padding: var(--spacing-s);
+  padding: var(--spacing-m);
   border-radius: var(--spacing-s);
   display: block;
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
   opacity: 1;
   pointer-events: auto;
+  margin-bottom: var(--spacing-m);
 }
 
 /* Event items vertical layout with flex for button positioning */
 .event-item {
-  padding: 15px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 15px;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.event-item:last-child {
+  margin-bottom: 0;
 }
 
 .event-item:last-child {
