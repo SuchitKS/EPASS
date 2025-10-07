@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
 import './participants.css'
 
 const API_BASE = 'https://epass-backend.onrender.com'
@@ -8,6 +7,7 @@ const API_BASE = 'https://epass-backend.onrender.com'
 function Participants() {
   const navigate = useNavigate()
   const [events, setEvents] = useState({ ongoing: [], completed: [], upcoming: [] })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     checkAuthAndLoadEvents()
@@ -51,7 +51,7 @@ function Participants() {
     if (!isAuthenticated) {
       return
     }
-    loadParticipantEvents()
+    await loadParticipantEvents()
   }
 
   const formatDate = (dateString) => {
@@ -128,12 +128,14 @@ function Participants() {
 
   const handleEventButtonClick = (eventId, eventType) => {
     console.log(`Button clicked for event ${eventId} (${eventType})`)
-    window.location.href = `/ticket3.html?eventId=${eventId}`
+    // Fixed: Use React Router navigate instead of window.location.href
+    navigate(`/ticket3?eventId=${eventId}`)
   }
 
   const loadParticipantEvents = async () => {
     try {
       console.log('Loading participant events...')
+      setLoading(true)
 
       const response = await fetch(`${API_BASE}/api/my-participant-events`, {
         method: 'GET',
@@ -166,6 +168,8 @@ function Participants() {
       setEvents(categorizedEvents)
     } catch (error) {
       console.error('Error fetching participant events:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -228,7 +232,7 @@ function Participants() {
   }
 
   return (
-    <div>
+    <>
       <div className="logout-container">
         <button id="logoutBtn" className="logout-btn" onClick={handleLogout}>
           <i className="fas fa-sign-out-alt"></i>
@@ -244,7 +248,13 @@ function Participants() {
               <div className="card__content">
                 <h3 className="card__heading">Ongoing Events</h3>
                 <div className="card__details">
-                  {renderEventList(events.ongoing, 'ongoing')}
+                  {loading ? (
+                    <div className="event-item">
+                      <p>Loading...</p>
+                    </div>
+                  ) : (
+                    renderEventList(events.ongoing, 'ongoing')
+                  )}
                 </div>
               </div>
             </div>
@@ -253,7 +263,13 @@ function Participants() {
               <div className="card__content">
                 <h3 className="card__heading">Completed Events</h3>
                 <div className="card__details">
-                  {renderEventList(events.completed, 'completed')}
+                  {loading ? (
+                    <div className="event-item">
+                      <p>Loading...</p>
+                    </div>
+                  ) : (
+                    renderEventList(events.completed, 'completed')
+                  )}
                 </div>
               </div>
             </div>
@@ -262,22 +278,26 @@ function Participants() {
               <div className="card__content">
                 <h3 className="card__heading">Upcoming Events</h3>
                 <div className="card__details">
-                  {renderEventList(events.upcoming, 'upcoming')}
+                  {loading ? (
+                    <div className="event-item">
+                      <p>Loading...</p>
+                    </div>
+                  ) : (
+                    renderEventList(events.upcoming, 'upcoming')
+                  )}
                 </div>
               </div>
             </div>
           </div>
           <div className="button-container">
-            <button onClick={() => navigate('/registerevent')}>Participate in other Event</button>
+            <button onClick={() => navigate('/registerevent')}>
+              Participate in other Event
+            </button>
           </div>
         </div>
       </section>
-      <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    </div>
+    </>
   )
 }
 
 export default Participants
-
-
