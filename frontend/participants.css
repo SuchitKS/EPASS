@@ -82,6 +82,10 @@ body {
   position: relative;
   cursor: pointer;
   transition: transform 0.3s ease, filter 0.3s ease;
+  background: transparent;
+  border-radius: var(--spacing-l);
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card:before {
@@ -98,6 +102,10 @@ body {
   position: absolute;
   right: 0;
   top: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1);
+  transition: transform 0.3s ease;
   transform-origin: center;
   transform: scale(1) translateZ(0);
   transition:
