@@ -8,18 +8,21 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-html, body {
+html, body, #root {
     height: 100%;
     width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 /* Background for all pages */
-body {
+.app-container {
+    min-height: 100vh;
     background: #00416A;
     background: -webkit-linear-gradient(to right, #E4E5E6, #00416A);  
     background: linear-gradient(to right, #E4E5E6, #00416A);
-    margin: 0;
-    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Only apply these styles when Login component is rendered */
