@@ -160,6 +160,7 @@ body {
     width: 50%;
     opacity: 0;
     z-index: 1;
+    pointer-events: none; /* ADDED: Prevent interaction when hidden */
 }
 
 .login-page .container.active .sign-up {
@@ -167,6 +168,7 @@ body {
     opacity: 1;
     z-index: 5;
     animation: move 0.6s;
+    pointer-events: auto; /* ADDED: Enable interaction when visible */
 }
 
 @keyframes move {
@@ -355,22 +357,30 @@ input[type="number"] {
     
     .login-page .form-container {
         width: 100%;
+        position: relative; /* ADDED: Better mobile positioning */
     }
     
     .login-page .sign-in,
     .login-page .sign-up {
         width: 100%;
+        position: relative; /* ADDED: Better mobile positioning */
+    }
+    
+    .login-page .sign-up {
+        display: none; /* ADDED: Hide sign-up by default on mobile */
+    }
+    
+    .login-page .container.active .sign-up {
+        display: flex; /* ADDED: Show when active */
+        position: relative;
+        transform: translateX(0);
+    }
+    
+    .login-page .container.active .sign-in {
+        display: none; /* ADDED: Hide sign-in when sign-up is active */
     }
     
     .login-page .toggle-container {
         display: none;
-    }
-    
-    .login-page .container.active .sign-in {
-        transform: translateX(-100%);
-    }
-    
-    .login-page .container.active .sign-up {
-        transform: translateX(0);
     }
 }
