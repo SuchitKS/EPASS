@@ -68,39 +68,55 @@ body {
   }
 }
 
-.card {
+/* Card container for Participants page */
+.hero-section .card {
   list-style: none;
   position: relative;
   cursor: pointer;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: all 0.3s ease;
   overflow: hidden;
-}
-
-.card:before {
-  content: '';
-  display: block;
-  padding-bottom: 300%;
   width: 100%;
+  min-height: 400px;
+  border-radius: var(--spacing-l);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: var(--spacing-l);
 }
 
+/* Card background */
 .card__background {
-  border-radius: var(--spacing-l);
-  bottom: 0;
-  left: 0;
   position: absolute;
-  right: 0;
   top: 0;
-  transform-origin: center;
-  transform: scale(1) translateZ(0);
-  transition:
-    filter 200ms linear,
-    transform 200ms linear;
-  background-image: radial-gradient(
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--spacing-l);
+  background: radial-gradient(
     circle 311px at 8.6% 27.9%,
     rgba(62,147,252,0.57) 12.9%,
     rgba(239,183,192,0.44) 91.2%
   );
+  transform: scale(1);
+  transition: transform 0.3s ease, filter 0.3s ease;
   filter: brightness(0.75) saturate(1.2) contrast(0.85);
+}
+
+/* Card content styling */
+.card__content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: var(--spacing-l);
+  display: flex;
+  flex-direction: column;
+}
+
+.card__heading {
+  color: var(--text-lighter);
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-m);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .card:hover {
@@ -368,4 +384,3 @@ body {
     font-size: 14px;
   }
 }
-
