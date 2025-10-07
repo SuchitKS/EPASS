@@ -293,12 +293,6 @@ function RegisterEvent() {
           </div>
         </div>
       </div>
-      <link
-        rel="stylesheet"
-        as="style"
-        href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
-      />
-      <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     </div>
   )
 }
